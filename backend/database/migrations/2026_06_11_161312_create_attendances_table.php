@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('procedure_id')->constrained('procedures')->restrictOnDelete();
             $table->decimal('amount_paid', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
-            $table->foreignId('register_by')->constrained('users')->restrictOnDelete();
+            $table->foreignId('registered_by')->constrained('users')->restrictOnDelete();
             $table->date('attendance_date');
             $table->timestamps();
         });
