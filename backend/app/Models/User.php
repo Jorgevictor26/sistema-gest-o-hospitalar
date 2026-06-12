@@ -26,16 +26,17 @@ class User extends Authenticatable
         'remember_token'
     ];
 
-    protected function doctor(): HasOne
+    public function doctor(): HasOne
     {
         return $this->hasOne(Doctor::class);
     }
 
-    protected function attendances(): HasMany
+    public function attendances(): HasMany
     {
-        return $this->hasMany(Attendance::class . 'registered_by');
+        return $this->hasMany(Attendance::class, 'registered_by');
     }
-    protected function casts(): array
+
+    public function casts(): array
     {
         return [
             'password' => 'hashed',

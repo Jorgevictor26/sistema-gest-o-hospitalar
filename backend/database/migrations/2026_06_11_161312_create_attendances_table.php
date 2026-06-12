@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_id')->constrained('patients')->restrictOnDelete();
             $table->foreignId('doctor_id')->constrained('doctors')->restrictOnDelete();
-            $table->foreignId('procedure_id')->constrained('procedures')->restrictOnDelete();
             $table->decimal('amount_paid', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
             $table->foreignId('registered_by')->constrained('users')->restrictOnDelete();
