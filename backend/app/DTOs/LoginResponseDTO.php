@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Dtos;
+namespace App\DTOs;
 
-use App\Dtos\UserDTO;
+use App\DTOs\UserDTO;
 use App\Models\User;
 
 class LoginResponseDTO

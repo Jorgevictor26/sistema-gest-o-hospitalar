@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\DTOs\Auth\LoginDTO;
-use App\Dtos\LoginResponseDTO;
+use App\DTOs\LoginDTO;
+use App\DTOs\LoginResponseDTO;
 use App\Repositories\UserRepository;
 use App\Exceptions\InvalidCredentialsException;
 use Illuminate\Support\Facades\Hash;

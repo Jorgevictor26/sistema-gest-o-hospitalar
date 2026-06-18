@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\Auth\LoginDTO;
+use App\DTOs\LoginDTO;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidCredentialsException;
-
 
 
 
