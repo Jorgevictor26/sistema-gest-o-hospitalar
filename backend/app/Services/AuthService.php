@@ -36,9 +36,11 @@ class AuthService
             'email' => $data->email,
             'phone_number' => $data->phone_number,
             'password' => Hash::make($data->password),
-            'role' => $data->role,
-            'is_active' => true
         ]);
+
+        $user->role = $data->role;
+        $user->is_active = true;
+        $user->save();
 
         return UserDTO::fromModel($user);
     }
