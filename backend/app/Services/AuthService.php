@@ -1,25 +1,28 @@
 <?php
 
-use App\DTOs\Auth\LoginDTO;
-use App\Exceptions\InvalidCredentialsException;
-use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Hash;
 
+use App\DTOs\Auth\LoginDTO;
+use App\Dtos\LoginResponseDTO;
+use App\Repositories\UserRepository;
+use App\Exceptions\InvalidCredentialsException;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
     public function __construct(
-        public readonly UserRepository $userRepository,
+        public readonly UserRepository $users,
     ) {}
 
-    public function login(LoginDTO $data)
+    public function login(LoginDTO $data): LoginResponseDTO
     {
-        $user = $this->userRepository->findByEmail($data->email);
+        $user = $this->users->findByEmail($data->email);
 
         if (!$user || !Hash::check($data->password, $user->password)) {
             throw new InvalidCredentialsException();
         }
-        
-        return $user;
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return LoginResponseDTO::fromModel($user, $token);
     }
 }
