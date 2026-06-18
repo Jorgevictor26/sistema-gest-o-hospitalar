@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\LoginDTO;
+use App\DTOs\RegisterDTO;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidCredentialsException;
-
-
+use App\Http\Requests\Auth\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -31,5 +31,9 @@ class AuthController extends Controller
                 'message' => $e->getMessage()
             ], 401);
         }
+    }
+    public function register(RegisterRequest $request)
+    {
+        $user = $this->authService->register(RegisterDTO::fromArray($request->validated()));
     }
 }

@@ -14,4 +14,9 @@ class UserRepository
     {
         return User::Where('email', $email)->first();
     }
+    public function create( array $data): User
+    {
+        return User::create($data);
+    }
+
 }

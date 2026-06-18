@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\DTOs\LoginDTO;
 use App\DTOs\LoginResponseDTO;
+use App\DTOs\RegisterDTO;
+use App\DTOs\UserDTO;
 use App\Repositories\UserRepository;
 use App\Exceptions\InvalidCredentialsException;
 use Illuminate\Support\Facades\Hash;
@@ -25,5 +27,19 @@ class AuthService
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return LoginResponseDTO::fromModel($user, $token);
+    }
+
+    public function register(RegisterDTO $data): UserDTO
+    {
+        $user = $this->users->create([
+            'name' => $data->name,
+            'email' => $data->email,
+            'phone_number' => $data->phone_number,
+            'password' => Hash::make($data->password),
+            'role' => $data->role,
+            'is_active' => true
+        ]);
+
+        return UserDTO::fromModel($user);
     }
 }
