@@ -8,9 +8,9 @@ class UserRepository
 {
     public function findById(int $id): User
     {
-        return User::findById($id);
+        return User::findOrFail($id);
     }
-    public function findByEmail(string $email): User
+    public function findByEmail(string $email): ?User
     {
         return User::Where('email', $email)->first();
     }

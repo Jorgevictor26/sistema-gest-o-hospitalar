@@ -6,6 +6,7 @@ use App\DTOs\LoginDTO;
 use App\DTOs\LoginResponseDTO;
 use App\DTOs\RegisterDTO;
 use App\DTOs\UserDTO;
+use App\Exceptions\BlockedAccountException;
 use App\Repositories\UserRepository;
 use App\Exceptions\InvalidCredentialsException;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,10 @@ class AuthService
     public function login(LoginDTO $data): LoginResponseDTO
     {
         $user = $this->users->findByEmail($data->email);
+
+        if($user->is_active === false){
+            throw new BlockedAccountException();
+        }
 
         if (!$user || !Hash::check($data->password, $user->password)) {
             throw new InvalidCredentialsException();
