@@ -24,10 +24,10 @@ class RegisterRequest extends FormRequest
     {
         return [
             "name" => 'required|min:3',
-            "email" => 'required|email',
+            "email" => 'required|email|unique:users,email',
             "phone_number" => 'required|min:9|max:9',
             "password" => 'required|min:8',
-            "role" => 'required|in:admin,receptionist,doctor'
+            "role" => 'required|exits:roles,name'
         ];
     }
 }

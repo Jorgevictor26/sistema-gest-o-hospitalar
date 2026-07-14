@@ -6,6 +6,7 @@ use App\DTOs\LoginDTO;
 use App\DTOs\LoginResponseDTO;
 use App\DTOs\RegisterDTO;
 use App\DTOs\UserDTO;
+use App\Models\Role;
 use App\Exceptions\BlockedAccountException;
 use App\Repositories\UserRepository;
 use App\Exceptions\InvalidCredentialsException;
@@ -43,7 +44,8 @@ class AuthService
             'password' => Hash::make($data->password),
         ]);
 
-        $user->role = $data->role;
+        $role = Role::where('name', $data->role)->firstOrFail();
+        $user->roles()->attach($role->id);
         $user->is_active = true;
         $user->save();
 
