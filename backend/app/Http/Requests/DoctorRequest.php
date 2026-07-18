@@ -28,8 +28,10 @@ class DoctorRequest extends FormRequest
             'phone_number' => 'required|string|size:9',
             'password' => 'required|string|min:8',
             'speciality' => 'required|string|max:255',
-            'roles' => 'sometimes|array',
-            'roles.*' => 'required|string|distinct|exists:roles,name',
+            'professional_number' => 'nullable|string|max:100|unique:doctors,professional_number',
+            'commission_percentage' => 'required|numeric|between:0,100|decimal:0,2',
+            'is_available' => 'sometimes|boolean',
+            'roles' => 'prohibited',
         ];
     }
 }

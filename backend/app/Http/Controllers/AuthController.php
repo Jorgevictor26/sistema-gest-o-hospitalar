@@ -3,18 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\LoginDTO;
-use App\DTOs\RegisterDTO;
 use App\Exceptions\BlockedAccountException;
 use App\Exceptions\InvalidCredentialsException;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
     public function __construct(
-        public readonly AuthService $authService,
+        private readonly AuthService $authService,
     ) {}
 
     public function login(LoginRequest $request): JsonResponse
@@ -34,12 +32,5 @@ class AuthController extends Controller
                 'message' => $e->getMessage(),
             ], 403);
         }
-    }
-
-    public function register(RegisterRequest $request): JsonResponse
-    {
-        $user = $this->authService->register(RegisterDTO::fromArray($request->validated()));
-
-        return response()->json($user, 201);
     }
 }

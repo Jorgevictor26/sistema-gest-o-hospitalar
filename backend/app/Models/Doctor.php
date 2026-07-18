@@ -11,6 +11,9 @@ class Doctor extends Model
     protected $fillable = [
         'user_id',
         'speciality',
+        'professional_number',
+        'commission_percentage',
+        'is_available',
     ];
 
     public function user(): BelongsTo
@@ -21,5 +24,18 @@ class Doctor extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'commission_percentage' => 'decimal:2',
+            'is_available' => 'boolean',
+        ];
     }
 }

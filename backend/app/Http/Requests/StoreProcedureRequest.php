@@ -19,6 +19,7 @@ class StoreProcedureRequest extends FormRequest
     {
         return [
             'procedure' => ['required', 'string', 'max:255', 'unique:procedures,procedure'],
+            'description' => ['nullable', 'string', 'max:2000'],
             'price' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
         ];
     }

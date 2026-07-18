@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\ProcedureDTO;
+use App\Http\Requests\ChangeProcedureStatusRequest;
 use App\Http\Requests\StoreProcedureRequest;
 use App\Http\Requests\UpdateProcedureRequest;
 use App\Http\Resources\ProcedureResource;
@@ -23,11 +25,15 @@ class ProcedureController extends Controller
         $filters = $request->validate([
             'search' => ['sometimes', 'nullable', 'string', 'max:100'],
             'per_page' => ['sometimes', 'integer', 'between:1,100'],
+            'active' => ['sometimes', 'boolean'],
         ]);
 
         $procedures = $this->procedureService->list(
             $filters['search'] ?? null,
             $filters['per_page'] ?? 15,
+            array_key_exists('active', $filters)
+                ? $request->boolean('active')
+                : ($request->user()->hasRole('admin') ? null : true),
         );
 
         return ProcedureResource::collection($procedures);
@@ -36,19 +42,28 @@ class ProcedureController extends Controller
     public function store(StoreProcedureRequest $request): JsonResponse
     {
         return (new ProcedureResource(
-            $this->procedureService->create($request->validated())
+            $this->procedureService->create(ProcedureDTO::fromArray($request->validated()))
         ))->response()->setStatusCode(201);
     }
 
-    public function show(Procedure $procedure): ProcedureResource
+    public function show(Request $request, Procedure $procedure): ProcedureResource
     {
-        return new ProcedureResource($procedure);
+        abort_if(! $procedure->is_active && ! $request->user()->hasRole('admin'), 404);
+
+        return new ProcedureResource($procedure->loadCount('attendances'));
     }
 
     public function update(UpdateProcedureRequest $request, Procedure $procedure): ProcedureResource
     {
         return new ProcedureResource(
-            $this->procedureService->update($procedure, $request->validated())
+            $this->procedureService->update($procedure, ProcedureDTO::fromArray($request->validated()))
+        );
+    }
+
+    public function changeStatus(ChangeProcedureStatusRequest $request, Procedure $procedure): ProcedureResource
+    {
+        return new ProcedureResource(
+            $this->procedureService->changeStatus($procedure, $request->boolean('is_active'))
         );
     }
 

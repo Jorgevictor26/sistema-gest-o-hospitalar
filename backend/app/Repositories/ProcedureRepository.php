@@ -7,9 +7,11 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProcedureRepository
 {
-    public function paginate(?string $search, int $perPage): LengthAwarePaginator
+    public function paginate(?string $search, int $perPage, ?bool $active): LengthAwarePaginator
     {
         return Procedure::query()
+            ->withCount('attendances')
+            ->when($active !== null, fn ($query) => $query->where('is_active', $active))
             ->when($search, fn ($query, string $search) => $query->where('procedure', 'like', "%{$search}%"))
             ->orderBy('procedure')
             ->paginate($perPage)

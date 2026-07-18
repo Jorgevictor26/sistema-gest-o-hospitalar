@@ -14,11 +14,25 @@ class Patient extends Model
         'date_of_birth',
         'identity_card',
         'email',
-        'address'
+        'address',
+        'is_active',
     ];
-    
+
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'date_of_birth' => 'date',
+            'is_active' => 'boolean',
+        ];
     }
 }

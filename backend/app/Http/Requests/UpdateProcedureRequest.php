@@ -31,6 +31,7 @@ class UpdateProcedureRequest extends FormRequest
                 'max:255',
                 Rule::unique('procedures', 'procedure')->ignore($procedure),
             ],
+            'description' => ['sometimes', 'nullable', 'string', 'max:2000'],
             'price' => ['sometimes', 'required', 'numeric', 'gt:0', 'decimal:0,2'],
         ];
     }
@@ -42,7 +43,7 @@ class UpdateProcedureRequest extends FormRequest
     {
         return [
             function (Validator $validator): void {
-                if (! $this->hasAny(['procedure', 'price'])) {
+                if (! $this->hasAny(['procedure', 'description', 'price'])) {
                     $validator->errors()->add(
                         'procedure',
                         'Informe o nome ou o preço que pretende actualizar.'

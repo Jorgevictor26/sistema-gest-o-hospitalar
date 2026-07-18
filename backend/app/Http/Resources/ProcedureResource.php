@@ -15,7 +15,10 @@ class ProcedureResource extends JsonResource
         return [
             'id' => $this->id,
             'procedure' => $this->procedure,
+            'description' => $this->description,
             'price' => $this->price,
+            'is_active' => $this->is_active,
+            'usage_count' => $this->whenCounted('attendances'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

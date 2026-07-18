@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'phone_number' => ['required', 'string', 'size:9'],
             'password' => ['required', 'string', 'min:8'],
             'roles' => ['required', 'array', 'min:1'],
-            'roles.*' => ['required', 'string', 'distinct', Rule::exists('roles', 'name')->whereNot('name', 'doctor')],
+            'roles.*' => ['required', 'string', 'distinct', Rule::in(['admin', 'receptionist']), Rule::exists('roles', 'name')],
         ];
     }
 }
