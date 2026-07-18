@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Doctor extends Model
 {
-
     protected $fillable = [
-        'speciality'
+        'user_id',
+        'speciality',
     ];
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -22,5 +22,4 @@ class Doctor extends Model
     {
         return $this->hasMany(Attendance::class);
     }
-
 }

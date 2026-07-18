@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->hasRole('admin') ?? false;
     }
 
     /**
@@ -23,11 +24,12 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => 'required|min:3',
-            "email" => 'required|email|unique:users,email',
-            "phone_number" => 'required|min:9|max:9',
-            "password" => 'required|min:8',
-            "role" => 'required|exits:roles,name'
+            'name' => ['required', 'string', 'min:3'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'phone_number' => ['required', 'string', 'size:9'],
+            'password' => ['required', 'string', 'min:8'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['required', 'string', 'distinct', Rule::exists('roles', 'name')->whereNot('name', 'doctor')],
         ];
     }
 }

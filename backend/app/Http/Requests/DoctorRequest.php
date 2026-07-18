@@ -12,7 +12,7 @@ class DoctorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()?->hasRole('admin') ?? false;
     }
 
     /**
@@ -28,6 +28,8 @@ class DoctorRequest extends FormRequest
             'phone_number' => 'required|string|size:9',
             'password' => 'required|string|min:8',
             'speciality' => 'required|string|max:255',
+            'roles' => 'sometimes|array',
+            'roles.*' => 'required|string|distinct|exists:roles,name',
         ];
     }
 }

@@ -13,16 +13,17 @@ class CheckRole
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
 
-        if (!$user || $user->role !== $role) {
+        if (! $user || ! $user->hasAnyRole($roles)) {
             return response()->json(
-                ["message" => "Unthorized access"],
+                ['message' => 'Não tem permissão para realizar esta operação.'],
                 403
             );
         }
+
         return $next($request);
     }
 }

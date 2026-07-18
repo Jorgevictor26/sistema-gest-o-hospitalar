@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Services;
 
 use App\DTOs\DoctorDTO;
 use App\Models\Doctor;
 use App\Models\Role;
-use App\Models\User;
 use App\Repositories\DoctorRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DoctorService
@@ -16,28 +18,33 @@ class DoctorService
         private readonly UserRepository $users,
     ) {}
 
+    public function list(?string $search, ?bool $active, int $perPage): LengthAwarePaginator
+    {
+        return $this->doctors->paginate($search, $active, $perPage);
+    }
+
     public function create(DoctorDTO $data): Doctor
     {
-        $user = $this->users->create(
-            [
+        return DB::transaction(function () use ($data): Doctor {
+            $user = $this->users->create([
                 'name' => $data->name,
                 'email' => $data->email,
                 'phone_number' => $data->phone_number,
-                'speciality' => $data->speciality,
                 'password' => Hash::make($data->password),
-            ]
-        );
+                'is_active' => true,
+            ]);
 
-        $role = Role::where('role', 'doctor');
+            $roleNames = array_values(array_unique([...$data->roles, 'doctor']));
+            $roleIds = Role::query()
+                ->whereIn('name', $roleNames)
+                ->pluck('id');
 
-        $user->roles()->attach($role->id);
+            $user->roles()->sync($roleIds);
 
-        $doctor = $this->doctors->create(
-            [
+            return $this->doctors->create([
                 'user_id' => $user->id,
-                'speciality' => $data->speciality
-            ]
-        );
-        return $doctor;
+                'speciality' => $data->speciality,
+            ])->load('user.roles');
+        });
     }
 }
