@@ -11,24 +11,29 @@ export interface PaymentStatusSummary {
 }
 
 export interface DailyClosingSummary {
-  readonly totalPatients: number;
-  readonly totalAttendances: number;
-  readonly totalBilled: number;
-  readonly totalReceived: number;
-  readonly totalPending: number;
+  readonly totalPatients: number | null;
+  readonly totalAttendances: number | null;
+  readonly totalBilled: number | null;
+  readonly totalReceived: number | null;
+  readonly totalPending: number | null;
 }
 
 export interface ClosingAttendance {
   readonly id: number;
   readonly code: string;
   readonly patient: string;
+  readonly patientPhone: string;
   readonly doctor: string;
+  readonly doctorSpeciality: string | null;
   readonly procedures: readonly string[];
+  readonly procedureDetails: readonly { name: string; price: number }[];
   readonly total: number;
   readonly amountPaid: number;
   readonly pendingAmount: number;
   readonly paymentStatus: 'paid' | 'partial' | 'unpaid';
   readonly time: string;
+  readonly attendanceDate: string;
+  readonly registeredAt: string;
 }
 
 export interface ClosingAuditEntry {
@@ -43,7 +48,7 @@ export interface DoctorBreakdown {
   readonly id: number;
   readonly doctor: string;
   readonly speciality: string;
-  readonly patients: number;
+  readonly patients: number | null;
   readonly attendances: number;
   readonly totalBilled: number;
   readonly totalReceived: number;
@@ -54,7 +59,7 @@ export interface ProcedureBreakdown {
   readonly id: number;
   readonly procedure: string;
   readonly quantity: number;
-  readonly appliedPrice: number;
+  readonly appliedPrice: number | null;
   readonly totalGenerated: number;
 }
 
@@ -70,6 +75,12 @@ export interface DailyClosingViewModel {
   readonly paymentStatuses: readonly PaymentStatusSummary[];
   readonly paymentMethods: readonly PaymentMethodSummary[];
   readonly attendances: readonly ClosingAttendance[];
+  readonly attendancePagination: {
+    readonly currentPage: number;
+    readonly lastPage: number;
+    readonly perPage: number;
+    readonly total: number;
+  };
   readonly doctors: readonly DoctorBreakdown[];
   readonly procedures: readonly ProcedureBreakdown[];
   readonly audit?: readonly ClosingAuditEntry[];
@@ -96,32 +107,43 @@ export interface DailyClosingViewModel {
   };
 }
 
-export function createDailyClosingViewModel(selectedDate: string, isAdmin: boolean): DailyClosingViewModel {
+export function createDailyClosingViewModel(
+  selectedDate: string,
+  isAdmin: boolean,
+  loading = false,
+): DailyClosingViewModel {
   return {
-  state: 'open',
-  selectedDate,
-  closure: { id: null, closedAt: null, closedBy: null },
-  summary: {
-    totalPatients: 0,
-    totalAttendances: 0,
-    totalBilled: 0,
-    totalReceived: 0,
-    totalPending: 0,
-  },
-  paymentStatuses: [],
-  paymentMethods: [],
-  attendances: [],
-  doctors: [],
-  procedures: [],
-  audit: undefined,
-  permissions: {
-    canClose: true,
-    canReopen: isAdmin,
-    pdfEnabled: true,
-    csvEnabled: true,
-    printEnabled: true,
-  },
-  loading: { page: false, summary: false, attendances: false, doctors: false, procedures: false },
-  errors: { page: null, summary: null, attendances: null, doctors: null, procedures: null },
+    state: 'open',
+    selectedDate,
+    closure: { id: null, closedAt: null, closedBy: null },
+    summary: {
+      totalPatients: null,
+      totalAttendances: null,
+      totalBilled: null,
+      totalReceived: null,
+      totalPending: null,
+    },
+    paymentStatuses: [],
+    paymentMethods: [],
+    attendances: [],
+    attendancePagination: { currentPage: 1, lastPage: 1, perPage: 15, total: 0 },
+    doctors: [],
+    procedures: [],
+    audit: undefined,
+    permissions: {
+      canClose: true,
+      canReopen: isAdmin,
+      pdfEnabled: false,
+      csvEnabled: false,
+      printEnabled: false,
+    },
+    loading: {
+      page: loading,
+      summary: loading,
+      attendances: loading,
+      doctors: loading,
+      procedures: loading,
+    },
+    errors: { page: null, summary: null, attendances: null, doctors: null, procedures: null },
   };
 }

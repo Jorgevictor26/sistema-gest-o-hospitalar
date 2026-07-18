@@ -1,68 +1,991 @@
-<div class="mx-auto flex w-full max-w-[1440px] flex-col gap-6 overflow-x-hidden p-4 sm:p-6 lg:p-8 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-[#005d90] [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-[#005d90]">
-  <nav class="flex flex-wrap items-center gap-1 text-xs text-[#566167]" aria-label="Navegação estrutural"><a routerLink="/dashboard" class="hover:text-[#005d90]">Gestão clínica</a><span aria-hidden="true" class="material-symbols-outlined text-base">chevron_right</span><span>Financeiro</span><span aria-hidden="true" class="material-symbols-outlined text-base">chevron_right</span><span class="font-semibold text-[#005d90]">Fecho diário</span></nav>
+<div
+  class="mx-auto flex w-full max-w-[1440px] flex-col gap-6 overflow-x-hidden p-4 sm:p-6 lg:p-8 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-[#005d90] [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-[#005d90]"
+>
+  <nav
+    class="flex flex-wrap items-center gap-1 text-xs text-[#566167]"
+    aria-label="Navegação estrutural"
+  >
+    <a routerLink="/dashboard" class="hover:text-[#005d90]">Gestão clínica</a
+    ><span aria-hidden="true" class="material-symbols-outlined text-base">chevron_right</span
+    ><span>Financeiro</span
+    ><span aria-hidden="true" class="material-symbols-outlined text-base">chevron_right</span
+    ><span class="font-semibold text-[#005d90]">Fecho diário</span>
+  </nav>
 
   <header class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-    <div><h1 class="text-3xl font-bold tracking-tight text-[#191c1d]">Fecho diário</h1><p class="mt-1 text-lg font-semibold text-[#404850]">{{ formatDate(viewModel().selectedDate) }}</p><div class="mt-2 flex flex-wrap items-center gap-2">@if (viewModel().state === 'closed') { <span class="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700"><span aria-hidden="true" class="material-symbols-outlined text-base">check_circle</span>Dia fechado</span> } @else { <span class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700"><span aria-hidden="true" class="material-symbols-outlined text-base">schedule</span>Dia aberto</span> } @if (viewModel().closure.id; as closureId) { <span class="text-xs text-[#6f797e]">ID do fecho: #{{ closureId }}</span> }</div></div>
-    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">@if (viewModel().state === 'closed' && viewModel().permissions.canReopen) { <button type="button" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#ba1a1a] px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto" [disabled]="reopeningDay()" (click)="openReopenConfirmation()">@if (reopeningDay()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>A reabrir… } @else { <span aria-hidden="true" class="material-symbols-outlined">lock_open</span>Reabrir dia }</button> } @if (viewModel().state === 'open' && viewModel().permissions.canClose) { <button type="button" class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#005d90] px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto" [disabled]="closingDay()" (click)="openCloseConfirmation()">@if (closingDay()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>A fechar… } @else { <span aria-hidden="true" class="material-symbols-outlined">lock</span>Fechar o dia }</button> }</div>
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-[#191c1d]">Fecho diário</h1>
+      <p class="mt-1 text-lg font-semibold text-[#404850]">
+        {{ formatDate(viewModel().selectedDate) }}
+      </p>
+      <div class="mt-2 flex flex-wrap items-center gap-2">
+        @if (viewModel().state === 'closed') {
+          <span
+            class="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700"
+            ><span aria-hidden="true" class="material-symbols-outlined text-base">check_circle</span
+            >Dia fechado</span
+          >
+        } @else {
+          <span
+            class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700"
+            ><span aria-hidden="true" class="material-symbols-outlined text-base">schedule</span>Dia
+            aberto</span
+          >
+        }
+        @if (viewModel().closure.id; as closureId) {
+          <span class="text-xs text-[#6f797e]">ID do fecho: #{{ closureId }}</span>
+        }
+        @if (viewModel().state === 'closed') {
+          <span class="text-xs text-[#6f797e]"
+            >Fechado por {{ viewModel().closure.closedBy ?? '—' }} · {{ formatClosedAt() }}</span
+          >
+        }
+      </div>
+    </div>
+    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+      @if (viewModel().state === 'closed' && viewModel().permissions.canReopen) {
+        <button
+          type="button"
+          class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#ba1a1a] px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          [disabled]="reopeningDay()"
+          (click)="openReopenConfirmation()"
+        >
+          @if (reopeningDay()) {
+            <span
+              class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            ></span
+            >A reabrir…
+          } @else {
+            <span aria-hidden="true" class="material-symbols-outlined">lock_open</span>Reabrir dia
+          }
+        </button>
+      }
+      @if (viewModel().state === 'closed') {
+        <button
+          type="button"
+          class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
+          [disabled]="exportingPdf()"
+          (click)="showUnavailable('A exportação PDF')"
+        >
+          <span aria-hidden="true" class="material-symbols-outlined text-lg">picture_as_pdf</span
+          >Exportar PDF
+        </button>
+        <button
+          type="button"
+          class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
+          [disabled]="exportingCsv()"
+          (click)="showUnavailable('A exportação CSV')"
+        >
+          <span aria-hidden="true" class="material-symbols-outlined text-lg">csv</span>Exportar CSV
+        </button>
+      }
+      @if (viewModel().state === 'open' && viewModel().permissions.canClose) {
+        <button
+          type="button"
+          class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#005d90] px-4 py-2.5 text-sm font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          [disabled]="closingDay()"
+          (click)="openCloseConfirmation()"
+        >
+          @if (closingDay()) {
+            <span
+              class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            ></span
+            >A fechar…
+          } @else {
+            <span aria-hidden="true" class="material-symbols-outlined">lock</span>Fechar o dia
+          }
+        </button>
+      }
+    </div>
   </header>
 
-  <section class="flex flex-col gap-3 rounded-2xl border border-[#e1e3e4] bg-white p-4 shadow-sm sm:flex-row sm:items-end"><button type="button" class="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-[#bfc7d1] px-3 text-sm font-semibold hover:bg-[#f3f4f5]" (click)="changeDay(-1)"><span aria-hidden="true" class="material-symbols-outlined">chevron_left</span>Dia anterior</button><label for="closing-date" class="flex-1"><span class="mb-1.5 block text-sm font-semibold text-[#404850]">Data selecionada</span><input id="closing-date" type="date" class="min-h-11 w-full rounded-xl border border-[#bfc7d1] bg-white px-3 outline-none focus:ring-2 focus:ring-[#94ccff]" [value]="viewModel().selectedDate" (change)="updateDate($event)" /><span class="mt-1 block text-xs text-[#6f797e]">{{ formatShortDate(viewModel().selectedDate) }}</span></label><button type="button" class="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-[#bfc7d1] px-3 text-sm font-semibold hover:bg-[#f3f4f5]" (click)="changeDay(1)">Dia seguinte<span aria-hidden="true" class="material-symbols-outlined">chevron_right</span></button></section>
+  <section class="flex flex-wrap items-center gap-2" aria-label="Navegar por data">
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-full border border-[#d4d9dc] bg-white text-[#404850] hover:bg-[#f3f4f5]"
+      [disabled]="viewModel().loading.page"
+      aria-label="Dia anterior"
+      (click)="changeDay(-1)"
+    >
+      <span aria-hidden="true" class="material-symbols-outlined">chevron_left</span>
+    </button>
+    <button
+      type="button"
+      class="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d4d9dc] bg-white px-4 text-sm font-semibold text-[#404850] hover:bg-[#f3f4f5]"
+      [disabled]="viewModel().loading.page"
+      (click)="openDatePicker(closingDate)"
+    >
+      <span aria-hidden="true" class="material-symbols-outlined text-lg">calendar_month</span>
+      {{ formatShortDate(viewModel().selectedDate) }}
+    </button>
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-full border border-[#d4d9dc] bg-white text-[#404850] hover:bg-[#f3f4f5] disabled:opacity-40"
+      [disabled]="viewModel().loading.page || viewModel().selectedDate >= maximumDate"
+      aria-label="Dia seguinte"
+      (click)="changeDay(1)"
+    >
+      <span aria-hidden="true" class="material-symbols-outlined">chevron_right</span>
+    </button>
+    <button
+      type="button"
+      class="min-h-10 rounded-full border px-5 text-sm font-semibold transition"
+      [class]="dateFilterClasses(viewModel().selectedDate === maximumDate)"
+      [disabled]="viewModel().loading.page"
+      (click)="selectDate(maximumDate)"
+    >
+      Hoje
+    </button>
+    <input
+      #closingDate
+      id="closing-date"
+      type="date"
+      class="sr-only"
+      [value]="viewModel().selectedDate"
+      [max]="maximumDate"
+      (change)="updateDate($event)"
+      aria-label="Escolher uma data"
+    />
+  </section>
 
-  @if (actionNotice(); as notice) { <div class="flex gap-3 rounded-xl border border-[#94ccff] bg-[#e4f3fa] p-4 text-sm text-[#164b63]" role="status"><span aria-hidden="true" class="material-symbols-outlined">info</span><p>{{ notice }}</p></div> }
-  @if (viewModel().errors.page; as pageError) { <div class="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert"><span aria-hidden="true" class="material-symbols-outlined">error</span><p>{{ pageError }}</p></div> }
-
-  @if (viewModel().state === 'closed') { <div class="flex items-start gap-3 rounded-r-xl border-l-4 border-[#005d90] bg-[#e7f5ff] p-4"><span aria-hidden="true" class="material-symbols-outlined mt-0.5 text-[#005d90]">info</span><p class="font-semibold text-[#164b63]">O fecho deste dia foi concluído. Os atendimentos estão bloqueados para alterações.</p></div> } @else { <div class="flex items-start gap-3 rounded-r-xl border-l-4 border-amber-500 bg-amber-50 p-4"><span aria-hidden="true" class="material-symbols-outlined mt-0.5 text-amber-700">warning</span><p class="font-semibold text-amber-800">Este dia ainda está aberto. Os valores apresentados podem sofrer alterações.</p></div> }
+  @if (actionNotice(); as notice) {
+    <div
+      class="flex gap-3 rounded-xl border border-[#94ccff] bg-[#e4f3fa] p-4 text-sm text-[#164b63]"
+      role="status"
+    >
+      <span aria-hidden="true" class="material-symbols-outlined">info</span>
+      <p>{{ notice }}</p>
+    </div>
+  }
+  @if (viewModel().loading.page) {
+    <div
+      class="animate-pulse rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm"
+      role="status"
+      aria-label="A carregar o fecho diário"
+    >
+      <div class="h-5 w-48 rounded bg-[#e1e3e4]"></div>
+      <div class="mt-4 grid gap-3 sm:grid-cols-3">
+        <div class="h-20 rounded-xl bg-[#edf0f1]"></div>
+        <div class="h-20 rounded-xl bg-[#edf0f1]"></div>
+        <div class="h-20 rounded-xl bg-[#edf0f1]"></div>
+      </div>
+    </div>
+  }
+  @if (viewModel().errors.page; as pageError) {
+    <div
+      class="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 sm:flex-row sm:items-center sm:justify-between"
+      role="alert"
+    >
+      <div class="flex gap-3">
+        <span aria-hidden="true" class="material-symbols-outlined">error</span>
+        <p>{{ pageError }}</p>
+      </div>
+      <button
+        type="button"
+        class="min-h-10 rounded-lg border border-red-300 px-4 font-semibold hover:bg-red-100"
+        (click)="retry()"
+      >
+        Tentar novamente
+      </button>
+    </div>
+  }
+  @if (viewModel().state === 'closed') {
+    <div class="flex items-start gap-3 rounded-r-xl border-l-4 border-[#005d90] bg-[#e7f5ff] p-4">
+      <span aria-hidden="true" class="material-symbols-outlined mt-0.5 text-[#005d90]">info</span>
+      <p class="font-semibold text-[#164b63]">
+        O fecho deste dia foi concluído. Os atendimentos estão bloqueados para alterações.
+      </p>
+    </div>
+  }
 
   <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Resumo do dia">
-    @for (card of summaryCards(); track card.label) { <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm"><span aria-hidden="true" class="material-symbols-outlined rounded-xl bg-[#e4f3fa] p-2 text-[#005d90]">{{ card.icon }}</span><p class="mt-5 text-2xl font-bold text-[#191c1d]">{{ card.money ? formatMoney(card.value) : card.value }}</p><p class="mt-1 text-sm text-[#566167]">{{ card.label }}</p></article> }
+    @for (card of summaryCards(); track card.label) {
+      <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm">
+        @if (viewModel().loading.summary) {
+          <div class="animate-pulse" role="status" aria-label="A carregar resumo">
+            <div class="h-10 w-10 rounded-xl bg-[#e1e3e4]"></div>
+            <div class="mt-5 h-8 w-28 rounded bg-[#e1e3e4]"></div>
+            <div class="mt-2 h-4 w-36 rounded bg-[#edf0f1]"></div>
+          </div>
+        } @else {
+          <span
+            aria-hidden="true"
+            class="material-symbols-outlined rounded-xl bg-[#e4f3fa] p-2 text-[#005d90]"
+            >{{ card.icon }}</span
+          >
+          <p class="mt-5 text-2xl font-bold text-[#191c1d]">
+            {{ formatSummaryValue(card.value, card.money) }}
+          </p>
+          <p class="mt-1 text-sm text-[#566167]">{{ card.label }}</p>
+        }
+      </article>
+    }
   </section>
 
-  <section class="grid gap-6 lg:grid-cols-2">
-    <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm sm:p-6"><h2 class="text-xl font-bold">Estado dos pagamentos</h2><div class="mt-5 grid gap-3 sm:grid-cols-3">@for (payment of viewModel().paymentStatuses; track payment.status) { <div class="rounded-xl border p-4 {{ paymentStatusClasses(payment.status) }}"><p class="text-sm font-semibold">{{ paymentStatusLabel(payment.status) }}</p><p class="mt-2 text-2xl font-bold">{{ payment.total }}</p></div> } @empty { <p class="col-span-full rounded-xl bg-[#f3f4f5] p-6 text-center text-sm text-[#6f797e]">Sem dados de pagamentos.</p> }</div></article>
-    <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm sm:p-6"><h2 class="text-xl font-bold">Métodos de pagamento</h2><p class="mt-1 text-xs text-[#6f797e]">Campo disponível no sistema</p><div class="mt-5 grid grid-cols-2 gap-3">@for (payment of viewModel().paymentMethods; track payment.method) { <div class="rounded-xl border border-[#bfc7d1] bg-[#f3f4f5] p-4"><p class="text-xs text-[#6f797e]">{{ payment.method }}</p><p class="mt-1 text-sm font-bold">{{ formatMoney(payment.amount) }}</p></div> } @empty { <p class="col-span-full rounded-xl bg-[#f3f4f5] p-6 text-center text-sm text-[#6f797e]">Sem dados por método.</p> }</div></article>
-  </section>
+  <nav
+    class="flex gap-2 overflow-x-auto border-b border-[#e1e3e4] pb-4"
+    aria-label="Secções do fecho diário"
+  >
+    <button
+      type="button"
+      class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
+      [class]="dateFilterClasses(summaryView() === 'general')"
+      (click)="summaryView.set('general')"
+    >
+      Resumo geral
+    </button>
+    <button
+      type="button"
+      class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
+      [class]="dateFilterClasses(summaryView() === 'doctor')"
+      (click)="summaryView.set('doctor')"
+    >
+      Por médico
+    </button>
+    <button
+      type="button"
+      class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
+      [class]="dateFilterClasses(summaryView() === 'procedure')"
+      (click)="summaryView.set('procedure')"
+    >
+      Por procedimento
+    </button>
+    <button
+      type="button"
+      class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
+      [class]="dateFilterClasses(summaryView() === 'attendances')"
+      (click)="summaryView.set('attendances')"
+    >
+      Atendimentos
+    </button>
+  </nav>
 
-  <section class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
-    <div class="border-b border-[#e1e3e4] p-5 sm:p-6"><h2 class="text-xl font-bold">Resumo por médico</h2><p class="mt-1 text-sm text-[#6f797e]">Movimento clínico e financeiro do dia selecionado.</p></div>
-    <div class="overflow-x-auto"><table class="w-full min-w-[900px] text-left"><thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]"><tr><th scope="col" class="px-5 py-4">Médico</th><th scope="col" class="px-5 py-4">Especialidade</th><th scope="col" class="px-5 py-4 text-center">Pacientes</th><th scope="col" class="px-5 py-4 text-center">Atendimentos</th><th scope="col" class="px-5 py-4 text-right">Total faturado</th><th scope="col" class="px-5 py-4 text-right">Total recebido</th><th scope="col" class="px-5 py-4 text-right">Total pendente</th></tr></thead><tbody class="divide-y divide-[#e1e3e4]">@for (doctor of viewModel().doctors; track doctor.id) { <tr class="hover:bg-[#f8f9fa]"><td class="px-5 py-4"><div class="flex items-center gap-3"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#d5e3ff] text-xs font-bold text-[#30476a]">{{ initials(doctor.doctor) }}</span><span class="font-semibold">{{ doctor.doctor }}</span></div></td><td class="px-5 py-4 text-sm text-[#566167]">{{ doctor.speciality }}</td><td class="px-5 py-4 text-center font-semibold">{{ doctor.patients }}</td><td class="px-5 py-4 text-center font-semibold">{{ doctor.attendances }}</td><td class="px-5 py-4 text-right font-semibold">{{ formatMoney(doctor.totalBilled) }}</td><td class="px-5 py-4 text-right font-semibold text-emerald-700">{{ formatMoney(doctor.totalReceived) }}</td><td class="px-5 py-4 text-right font-semibold text-red-700">{{ formatMoney(doctor.totalPending) }}</td></tr> } @empty { <tr><td colspan="7" class="px-5 py-12 text-center text-sm text-[#6f797e]">Nenhum resumo médico disponível.</td></tr> }</tbody></table></div>
-  </section>
+  @if (summaryView() === 'general') {
+    <section class="grid gap-6 lg:grid-cols-2">
+      <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm sm:p-6">
+        <h2 class="text-xl font-bold">Estado dos pagamentos</h2>
+        <div class="mt-5 grid gap-3 sm:grid-cols-3">
+          @for (payment of viewModel().paymentStatuses; track payment.status) {
+            <div class="rounded-xl border p-4 {{ paymentStatusClasses(payment.status) }}">
+              <p class="text-sm font-semibold">{{ paymentStatusLabel(payment.status) }}</p>
+              <p class="mt-2 text-2xl font-bold">{{ payment.total }}</p>
+            </div>
+          } @empty {
+            <p class="col-span-full rounded-xl bg-[#f3f4f5] p-6 text-center text-sm text-[#6f797e]">
+              Sem dados de pagamentos.
+            </p>
+          }
+        </div>
+      </article>
+      @if (viewModel().paymentMethods.length > 0) {
+        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm sm:p-6">
+          <h2 class="text-xl font-bold">Métodos de pagamento</h2>
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            @for (payment of viewModel().paymentMethods; track payment.method) {
+              <div class="rounded-xl border border-[#bfc7d1] bg-[#f3f4f5] p-4">
+                <p class="text-xs text-[#6f797e]">{{ payment.method }}</p>
+                <p class="mt-1 text-sm font-bold">{{ formatMoney(payment.amount) }}</p>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </section>
+  }
 
-  <section class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
-    <div class="border-b border-[#e1e3e4] p-5 sm:p-6"><h2 class="text-xl font-bold">Resumo por procedimento</h2><p class="mt-1 text-sm text-[#6f797e]">Procedimentos registados no dia selecionado.</p></div>
-    <div class="overflow-x-auto"><table class="w-full min-w-[640px] text-left"><thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]"><tr><th scope="col" class="px-5 py-4">Procedimento</th><th scope="col" class="px-5 py-4 text-center">Quantidade</th><th scope="col" class="px-5 py-4 text-right">Preço aplicado</th><th scope="col" class="px-5 py-4 text-right">Total gerado</th></tr></thead><tbody class="divide-y divide-[#e1e3e4]">@for (procedure of viewModel().procedures; track procedure.id) { <tr class="hover:bg-[#f8f9fa]"><td class="px-5 py-4 font-semibold">{{ procedure.procedure }}</td><td class="px-5 py-4 text-center font-semibold">{{ procedure.quantity }}</td><td class="px-5 py-4 text-right">{{ formatMoney(procedure.appliedPrice) }}</td><td class="px-5 py-4 text-right font-bold text-[#005d90]">{{ formatMoney(procedure.totalGenerated) }}</td></tr> } @empty { <tr><td colspan="4" class="px-5 py-12 text-center text-sm text-[#6f797e]">Nenhum procedimento disponível.</td></tr> }</tbody></table></div>
-  </section>
+  @if (summaryView() === 'doctor') {
+    <section class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
+      <div class="border-b border-[#e1e3e4] p-5 sm:p-6">
+        <h2 class="text-xl font-bold">Resumo por médico</h2>
+        <p class="mt-1 text-sm text-[#6f797e]">
+          Movimento clínico e financeiro do dia selecionado.
+        </p>
+        @if (viewModel().errors.doctors; as error) {
+          <p class="mt-2 text-xs font-semibold text-amber-700">{{ error }}</p>
+        }
+      </div>
+      @if (viewModel().loading.doctors) {
+        <div
+          class="animate-pulse space-y-3 p-5"
+          role="status"
+          aria-label="A carregar resumo por médico"
+        >
+          @for (row of [1, 2, 3]; track row) {
+            <div class="h-14 rounded-xl bg-[#edf0f1]"></div>
+          }
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[900px] text-left">
+            <thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]">
+              <tr>
+                <th scope="col" class="px-5 py-4">Médico</th>
+                <th scope="col" class="px-5 py-4">Especialidade</th>
+                <th scope="col" class="px-5 py-4 text-center">Pacientes</th>
+                <th scope="col" class="px-5 py-4 text-center">Atendimentos</th>
+                <th scope="col" class="px-5 py-4 text-right">Total faturado</th>
+                <th scope="col" class="px-5 py-4 text-right">Total recebido</th>
+                <th scope="col" class="px-5 py-4 text-right">Total pendente</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#e1e3e4]">
+              @for (doctor of viewModel().doctors; track doctor.id) {
+                <tr class="hover:bg-[#f8f9fa]">
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <span
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#d5e3ff] text-xs font-bold text-[#30476a]"
+                        >{{ initials(doctor.doctor) }}</span
+                      ><span class="font-semibold">{{ doctor.doctor }}</span>
+                    </div>
+                  </td>
+                  <td class="px-5 py-4 text-sm text-[#566167]">{{ doctor.speciality }}</td>
+                  <td class="px-5 py-4 text-center font-semibold">{{ doctor.patients ?? '—' }}</td>
+                  <td class="px-5 py-4 text-center font-semibold">{{ doctor.attendances }}</td>
+                  <td class="px-5 py-4 text-right font-semibold">
+                    {{ formatMoney(doctor.totalBilled) }}
+                  </td>
+                  <td class="px-5 py-4 text-right font-semibold text-emerald-700">
+                    {{ formatMoney(doctor.totalReceived) }}
+                  </td>
+                  <td class="px-5 py-4 text-right font-semibold text-red-700">
+                    {{ formatMoney(doctor.totalPending) }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="px-5 py-12 text-center text-sm text-[#6f797e]">
+                    Nenhum resumo médico disponível.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
 
-  <section class="grid grid-cols-1 gap-6 lg:grid-cols-12">
-    <article class="rounded-2xl border border-[#e1e3e4] bg-white/90 p-5 shadow-sm sm:p-6 lg:col-span-8"><div class="flex items-center justify-between"><div><h2 class="text-xl font-bold">Resumo do {{ viewModel().state === 'closed' ? 'encerramento' : 'dia' }}</h2>@if (viewModel().state === 'open') { <p class="mt-1 text-xs font-semibold text-amber-700">Valores provisórios</p> }</div><span aria-hidden="true" class="material-symbols-outlined text-[#005d90]">summarize</span></div><div class="mt-6 grid gap-5 border-t border-[#bfc7d1] pt-6 sm:grid-cols-2">@if (viewModel().state === 'closed') { <div><p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">Data e hora do fecho</p><p class="mt-2 flex items-center gap-2 font-semibold"><span aria-hidden="true" class="material-symbols-outlined text-[#005d90]">schedule</span>{{ formatClosedAt() }}</p></div><div><p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">Fechado por</p><p class="mt-2 flex items-center gap-2 font-semibold"><span aria-hidden="true" class="material-symbols-outlined text-[#005d90]">person</span>{{ viewModel().closure.closedBy ?? '—' }}</p></div> } @else { <div><p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">Estado</p><p class="mt-2 font-semibold text-amber-700">Em atualização</p></div><div><p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">Data consultada</p><p class="mt-2 font-semibold">{{ formatShortDate(viewModel().selectedDate) }}</p></div> }</div></article>
+  @if (summaryView() === 'procedure') {
+    <section class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
+      <div class="border-b border-[#e1e3e4] p-5 sm:p-6">
+        <h2 class="text-xl font-bold">Resumo por procedimento</h2>
+        <p class="mt-1 text-sm text-[#6f797e]">Procedimentos registados no dia selecionado.</p>
+        @if (viewModel().errors.procedures; as error) {
+          <p class="mt-2 text-xs font-semibold text-amber-700">{{ error }}</p>
+        }
+      </div>
+      @if (viewModel().loading.procedures) {
+        <div
+          class="animate-pulse space-y-3 p-5"
+          role="status"
+          aria-label="A carregar resumo por procedimento"
+        >
+          @for (row of [1, 2, 3]; track row) {
+            <div class="h-14 rounded-xl bg-[#edf0f1]"></div>
+          }
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[640px] text-left">
+            <thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]">
+              <tr>
+                <th scope="col" class="px-5 py-4">Procedimento</th>
+                <th scope="col" class="px-5 py-4 text-center">Quantidade</th>
+                <th scope="col" class="px-5 py-4 text-right">Preço aplicado ou médio</th>
+                <th scope="col" class="px-5 py-4 text-right">Total gerado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#e1e3e4]">
+              @for (procedure of viewModel().procedures; track procedure.id) {
+                <tr class="hover:bg-[#f8f9fa]">
+                  <td class="px-5 py-4 font-semibold">{{ procedure.procedure }}</td>
+                  <td class="px-5 py-4 text-center font-semibold">{{ procedure.quantity }}</td>
+                  <td class="px-5 py-4 text-right">
+                    {{
+                      procedure.appliedPrice === null ? '—' : formatMoney(procedure.appliedPrice)
+                    }}
+                  </td>
+                  <td class="px-5 py-4 text-right font-bold text-[#005d90]">
+                    {{ formatMoney(procedure.totalGenerated) }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="px-5 py-12 text-center text-sm text-[#6f797e]">
+                    Nenhum procedimento disponível.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
 
-    <article class="flex flex-col rounded-2xl bg-[#005d90] p-5 text-white shadow-lg sm:p-6 lg:col-span-4"><h2 class="text-xl font-bold">Documentação</h2><p class="mt-2 text-sm text-white/75">Consulte as opções de documentação do dia selecionado.</p><div class="mt-6 flex flex-col gap-3 lg:mt-auto"><button type="button" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 py-3 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40" [disabled]="!viewModel().permissions.pdfEnabled || exportingPdf()" (click)="showUnavailable('A exportação PDF')">@if (exportingPdf()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>A exportar PDF… } @else { <span aria-hidden="true" class="material-symbols-outlined">picture_as_pdf</span>Exportar PDF }</button><button type="button" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 py-3 hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40" [disabled]="!viewModel().permissions.csvEnabled || exportingCsv()" (click)="showUnavailable('A exportação CSV')">@if (exportingCsv()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>A exportar CSV… } @else { <span aria-hidden="true" class="material-symbols-outlined">csv</span>Exportar CSV }</button><button type="button" class="inline-flex items-center justify-center gap-2 rounded-xl bg-white py-3 font-bold text-[#005d90] shadow-sm hover:bg-[#f3f4f5] disabled:cursor-not-allowed disabled:opacity-40" [disabled]="!viewModel().permissions.printEnabled || printing()" (click)="showUnavailable('A impressão')">@if (printing()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-[#005d90]/30 border-t-[#005d90]"></span>A imprimir… } @else { <span aria-hidden="true" class="material-symbols-outlined">print</span>Imprimir }</button></div></article>
-  </section>
+  @if (summaryView() === 'general') {
+    <section class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <article
+        class="rounded-2xl border border-[#e1e3e4] bg-white/90 p-5 shadow-sm sm:p-6 lg:col-span-12"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold">
+              Resumo do {{ viewModel().state === 'closed' ? 'encerramento' : 'dia' }}
+            </h2>
+            @if (viewModel().state === 'open') {
+              <p class="mt-1 text-xs font-semibold text-amber-700">Valores provisórios</p>
+            }
+          </div>
+          <span aria-hidden="true" class="material-symbols-outlined text-[#005d90]">summarize</span>
+        </div>
+        <div class="mt-6 grid gap-5 border-t border-[#bfc7d1] pt-6 sm:grid-cols-2">
+          @if (viewModel().state === 'closed') {
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">
+                Data e hora do fecho
+              </p>
+              <p class="mt-2 flex items-center gap-2 font-semibold">
+                <span aria-hidden="true" class="material-symbols-outlined text-[#005d90]"
+                  >schedule</span
+                >{{ formatClosedAt() }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">
+                Fechado por
+              </p>
+              <p class="mt-2 flex items-center gap-2 font-semibold">
+                <span aria-hidden="true" class="material-symbols-outlined text-[#005d90]"
+                  >person</span
+                >{{ viewModel().closure.closedBy ?? '—' }}
+              </p>
+            </div>
+          } @else {
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">Estado</p>
+              <p class="mt-2 font-semibold text-amber-700">Em atualização</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">
+                Data consultada
+              </p>
+              <p class="mt-2 font-semibold">{{ formatShortDate(viewModel().selectedDate) }}</p>
+            </div>
+          }
+        </div>
+      </article>
+    </section>
+  }
 
-  <section class="flex flex-col gap-4"><div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><h2 class="text-xl font-bold">Atendimentos do dia</h2><p class="mt-1 text-sm text-[#6f797e]">Listagem apenas para consulta</p></div><label class="relative block w-full sm:w-72"><span class="sr-only">Pesquisar atendimento</span><span aria-hidden="true" class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6f797e]">search</span><input type="search" class="w-full rounded-xl border border-[#bfc7d1] bg-white py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-[#94ccff]" placeholder="Código, paciente, médico..." [value]="search()" (input)="updateSearch($event)" /></label></div>
-    @if (viewModel().errors.attendances; as error) { <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">{{ error }}</div> } @else { <div class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">@if (viewModel().loading.attendances) { <div class="animate-pulse space-y-3 p-5" aria-label="A carregar atendimentos">@for (row of [1, 2, 3]; track row) { <div class="h-14 rounded-xl bg-[#edf0f1]"></div> }</div> } @else { <div class="overflow-x-auto"><table class="w-full min-w-[1180px] text-left"><thead class="border-b border-[#bfc7d1] bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]"><tr><th scope="col" class="px-4 py-4">Código</th><th scope="col" class="px-4 py-4">Paciente</th><th scope="col" class="px-4 py-4">Médico</th><th scope="col" class="px-4 py-4">Procedimentos</th><th scope="col" class="px-4 py-4 text-right">Total</th><th scope="col" class="px-4 py-4 text-right">Valor pago</th><th scope="col" class="px-4 py-4 text-right">Valor pendente</th><th scope="col" class="px-4 py-4">Estado</th><th scope="col" class="px-4 py-4">Hora</th><th scope="col" class="px-4 py-4 text-center">Ação</th></tr></thead><tbody class="divide-y divide-[#e1e3e4]">@for (attendance of paginatedAttendances(); track attendance.id) { <tr class="hover:bg-[#f8f9fa]"><td class="px-4 py-4 text-sm font-semibold text-[#005d90]">{{ attendance.code }}</td><td class="px-4 py-4"><div class="flex items-center gap-3"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#50d9fe]/20 text-xs font-bold text-[#005c70]">{{ initials(attendance.patient) }}</span><span class="font-semibold">{{ attendance.patient }}</span></div></td><td class="px-4 py-4 text-sm">{{ attendance.doctor }}</td><td class="px-4 py-4 text-sm">{{ attendance.procedures.join(', ') }}</td><td class="px-4 py-4 text-right font-semibold">{{ formatMoney(attendance.total) }}</td><td class="px-4 py-4 text-right font-semibold text-emerald-700">{{ formatMoney(attendance.amountPaid) }}</td><td class="px-4 py-4 text-right font-semibold text-red-700">{{ formatMoney(attendance.pendingAmount) }}</td><td class="px-4 py-4"><span class="rounded-full border px-2.5 py-1 text-xs font-semibold {{ paymentStatusClasses(attendance.paymentStatus) }}">{{ attendancePaymentLabel(attendance.paymentStatus) }}</span></td><td class="px-4 py-4 text-sm">{{ attendance.time }}</td><td class="px-4 py-4 text-center"><button type="button" class="rounded-lg p-2 text-[#005d90] hover:bg-[#e4f3fa]" aria-label="Visualizar atendimento" (click)="showUnavailable('A visualização do atendimento')"><span aria-hidden="true" class="material-symbols-outlined">visibility</span></button></td></tr> } @empty { <tr><td colspan="10" class="px-5 py-14 text-center"><span aria-hidden="true" class="material-symbols-outlined text-4xl text-[#aeb6ba]">search_off</span><p class="mt-2 text-sm font-semibold text-[#566167]">Nenhum atendimento encontrado.</p></td></tr> }</tbody></table></div><div class="flex flex-col gap-3 border-t border-[#bfc7d1] bg-[#f3f4f5] p-4 text-xs text-[#6f797e] sm:flex-row sm:items-center sm:justify-between"><p>{{ filteredAttendances().length }} atendimento(s) encontrado(s).</p><div class="flex items-center gap-2"><button type="button" class="flex h-9 w-9 items-center justify-center rounded-full hover:bg-[#e1e3e4] disabled:opacity-40" [disabled]="attendancePage() === 1" aria-label="Página anterior" (click)="changeAttendancePage(attendancePage() - 1)"><span aria-hidden="true" class="material-symbols-outlined">chevron_left</span></button><span class="font-bold">{{ attendancePage() }} / {{ attendanceTotalPages() }}</span><button type="button" class="flex h-9 w-9 items-center justify-center rounded-full hover:bg-[#e1e3e4] disabled:opacity-40" [disabled]="attendancePage() === attendanceTotalPages()" aria-label="Página seguinte" (click)="changeAttendancePage(attendancePage() + 1)"><span aria-hidden="true" class="material-symbols-outlined">chevron_right</span></button></div></div> }</div> }
-  </section>
+  @if (summaryView() === 'attendances') {
+    <section class="flex flex-col gap-4">
+      <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+        <div>
+          <h2 class="text-xl font-bold">Atendimentos do dia</h2>
+          <p class="mt-1 text-sm text-[#6f797e]">Listagem apenas para consulta</p>
+        </div>
+        <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <label class="relative block w-full sm:w-72"
+            ><span class="sr-only">Pesquisar paciente</span
+            ><span
+              aria-hidden="true"
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6f797e]"
+              >search</span
+            ><input
+              type="search"
+              class="min-h-11 w-full rounded-xl border border-[#bfc7d1] bg-white py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-[#94ccff]"
+              placeholder="Pesquisar paciente..."
+              [value]="search()"
+              (input)="updateSearch($event)"
+          /></label>
+          <label class="block"
+            ><span class="sr-only">Estado do pagamento</span
+            ><select
+              class="min-h-11 w-full rounded-xl border border-[#bfc7d1] bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-[#94ccff] sm:w-48"
+              [value]="paymentStatusFilter()"
+              (change)="updatePaymentStatus($event)"
+            >
+              <option value="">Todos os estados</option>
+              <option value="paid">Pago</option>
+              <option value="partial">Parcial</option>
+              <option value="unpaid">Não pago</option>
+            </select></label
+          >
+        </div>
+      </div>
+      @if (viewModel().errors.attendances; as error) {
+        <div
+          class="flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 sm:flex-row sm:items-center sm:justify-between"
+          role="alert"
+        >
+          <span>{{ error }}</span>
+          <button
+            type="button"
+            class="min-h-10 rounded-lg border border-red-300 px-4 font-semibold hover:bg-red-100"
+            (click)="retryAttendances()"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      } @else {
+        <div class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
+          @if (viewModel().loading.attendances) {
+            <div class="animate-pulse space-y-3 p-5" aria-label="A carregar atendimentos">
+              @for (row of [1, 2, 3]; track row) {
+                <div class="h-14 rounded-xl bg-[#edf0f1]"></div>
+              }
+            </div>
+          } @else {
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-[1180px] text-left">
+                <thead
+                  class="border-b border-[#bfc7d1] bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]"
+                >
+                  <tr>
+                    <th scope="col" class="px-4 py-4">Código</th>
+                    <th scope="col" class="px-4 py-4">Paciente</th>
+                    <th scope="col" class="px-4 py-4">Médico</th>
+                    <th scope="col" class="px-4 py-4">Procedimentos</th>
+                    <th scope="col" class="px-4 py-4 text-right">Total</th>
+                    <th scope="col" class="px-4 py-4 text-right">Valor pago</th>
+                    <th scope="col" class="px-4 py-4 text-right">Valor pendente</th>
+                    <th scope="col" class="px-4 py-4">Estado</th>
+                    <th scope="col" class="px-4 py-4">Registado às</th>
+                    <th scope="col" class="px-4 py-4 text-center">Ação</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e1e3e4]">
+                  @for (attendance of paginatedAttendances(); track attendance.id) {
+                    <tr class="hover:bg-[#f8f9fa]">
+                      <td class="px-4 py-4 text-sm font-semibold text-[#005d90]">
+                        {{ attendance.code }}
+                      </td>
+                      <td class="px-4 py-4">
+                        <button
+                          type="button"
+                          class="flex items-center gap-3 text-left hover:text-[#005d90]"
+                          (click)="openAttendance(attendance)"
+                        >
+                          <span
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#50d9fe]/20 text-xs font-bold text-[#005c70]"
+                            >{{ initials(attendance.patient) }}</span
+                          ><span class="font-semibold">{{ attendance.patient }}</span>
+                        </button>
+                      </td>
+                      <td class="px-4 py-4 text-sm">
+                        <span class="block font-semibold">{{ attendance.doctor }}</span
+                        ><span class="text-xs text-[#6f797e]">{{
+                          attendance.doctorSpeciality ?? '—'
+                        }}</span>
+                      </td>
+                      <td class="px-4 py-4 text-sm">{{ attendance.procedures.join(', ') }}</td>
+                      <td class="px-4 py-4 text-right font-semibold">
+                        {{ formatMoney(attendance.total) }}
+                      </td>
+                      <td class="px-4 py-4 text-right font-semibold text-emerald-700">
+                        {{ formatMoney(attendance.amountPaid) }}
+                      </td>
+                      <td class="px-4 py-4 text-right font-semibold text-red-700">
+                        {{ formatMoney(attendance.pendingAmount) }}
+                      </td>
+                      <td class="px-4 py-4">
+                        <span
+                          class="rounded-full border px-2.5 py-1 text-xs font-semibold {{
+                            paymentStatusClasses(attendance.paymentStatus)
+                          }}"
+                          >{{ attendancePaymentLabel(attendance.paymentStatus) }}</span
+                        >
+                      </td>
+                      <td class="px-4 py-4 text-sm">{{ formatAttendanceTime(attendance.time) }}</td>
+                      <td class="px-4 py-4 text-center">
+                        <button
+                          type="button"
+                          class="rounded-lg p-2 text-[#005d90] hover:bg-[#e4f3fa]"
+                          aria-label="Visualizar atendimento"
+                          (click)="openAttendance(attendance)"
+                        >
+                          <span aria-hidden="true" class="material-symbols-outlined"
+                            >visibility</span
+                          >
+                        </button>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="10" class="px-5 py-14 text-center">
+                        <span
+                          aria-hidden="true"
+                          class="material-symbols-outlined text-4xl text-[#aeb6ba]"
+                          >search_off</span
+                        >
+                        <p class="mt-2 text-sm font-semibold text-[#566167]">
+                          Nenhum atendimento encontrado.
+                        </p>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            <div
+              class="flex flex-col gap-3 border-t border-[#bfc7d1] bg-[#f3f4f5] p-4 text-xs text-[#6f797e] sm:flex-row sm:items-center sm:justify-between"
+            >
+              <p>{{ viewModel().attendancePagination.total }} atendimento(s) encontrado(s).</p>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="flex h-9 w-9 items-center justify-center rounded-full hover:bg-[#e1e3e4] disabled:opacity-40"
+                  [disabled]="attendancePage() === 1"
+                  aria-label="Página anterior"
+                  (click)="changeAttendancePage(attendancePage() - 1)"
+                >
+                  <span aria-hidden="true" class="material-symbols-outlined"
+                    >chevron_left</span
+                  ></button
+                ><span class="font-bold">{{ attendancePage() }} / {{ attendanceTotalPages() }}</span
+                ><button
+                  type="button"
+                  class="flex h-9 w-9 items-center justify-center rounded-full hover:bg-[#e1e3e4] disabled:opacity-40"
+                  [disabled]="attendancePage() === attendanceTotalPages()"
+                  aria-label="Página seguinte"
+                  (click)="changeAttendancePage(attendancePage() + 1)"
+                >
+                  <span aria-hidden="true" class="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
 
-  @if (viewModel().audit; as auditEntries) { @if (auditEntries.length > 0) { <section><h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-[#6f797e]">Log de segurança</h2><div class="overflow-hidden rounded-xl border border-[#bfc7d1] bg-white"><div class="overflow-x-auto"><table class="w-full min-w-[680px] text-left"><thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]"><tr><th scope="col" class="px-4 py-3">Ação</th><th scope="col" class="px-4 py-3">Utilizador</th><th scope="col" class="px-4 py-3">Data e hora</th><th scope="col" class="px-4 py-3">Justificação</th></tr></thead><tbody class="divide-y divide-[#e1e3e4]">@for (entry of auditEntries; track entry.id) { <tr><td class="px-4 py-4 font-semibold">{{ entry.action }}</td><td class="px-4 py-4 text-sm">{{ entry.user }}</td><td class="px-4 py-4 text-sm text-[#566167]">{{ formatAuditDate(entry.dateTime) }}</td><td class="px-4 py-4 text-sm text-[#566167]">{{ entry.reason ?? '—' }}</td></tr> }</tbody></table></div></div></section> } }
+  @if (viewModel().audit; as auditEntries) {
+    @if (auditEntries.length > 0) {
+      <section>
+        <h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-[#6f797e]">
+          Log de segurança
+        </h2>
+        <div class="overflow-hidden rounded-xl border border-[#bfc7d1] bg-white">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[680px] text-left">
+              <thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]">
+                <tr>
+                  <th scope="col" class="px-4 py-3">Ação</th>
+                  <th scope="col" class="px-4 py-3">Utilizador</th>
+                  <th scope="col" class="px-4 py-3">Data e hora</th>
+                  <th scope="col" class="px-4 py-3">Justificação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#e1e3e4]">
+                @for (entry of auditEntries; track entry.id) {
+                  <tr>
+                    <td class="px-4 py-4 font-semibold">{{ entry.action }}</td>
+                    <td class="px-4 py-4 text-sm">{{ entry.user }}</td>
+                    <td class="px-4 py-4 text-sm text-[#566167]">
+                      {{ formatAuditDate(entry.dateTime) }}
+                    </td>
+                    <td class="px-4 py-4 text-sm text-[#566167]">{{ entry.reason ?? '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    }
+  }
 </div>
 
+@if (selectedAttendance(); as attendance) {
+  <div
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-[#172126]/55 p-4"
+    role="presentation"
+    (click)="selectedAttendance.set(null)"
+  >
+    <section
+      class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-7"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="attendance-dialog-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start justify-between gap-4 border-b border-[#e1e3e4] pb-5">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider text-[#005d90]">
+            {{ attendance.code }}
+          </p>
+          <h2 id="attendance-dialog-title" class="mt-1 text-2xl font-bold">
+            Detalhes do atendimento
+          </h2>
+          <p class="mt-1 text-sm text-[#6f797e]">
+            {{ formatAttendanceDate(attendance.attendanceDate) }} · Registado às
+            {{ formatAttendanceTime(attendance.registeredAt) }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="rounded-lg p-2 text-2xl text-[#566167] hover:bg-[#f3f4f5]"
+          aria-label="Fechar detalhes"
+          (click)="selectedAttendance.set(null)"
+        >
+          ×
+        </button>
+      </div>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <article class="rounded-xl bg-[#e4f3fa] p-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#566167]">Paciente</p>
+          <div class="mt-3 flex items-center gap-3">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-full bg-[#cde5ff] text-sm font-bold text-[#005d90]"
+              >{{ initials(attendance.patient) }}</span
+            >
+            <div>
+              <p class="font-bold">{{ attendance.patient }}</p>
+              <p class="text-sm text-[#566167]">
+                {{ attendance.patientPhone || 'Telefone não informado' }}
+              </p>
+            </div>
+          </div>
+        </article>
+        <article class="rounded-xl bg-[#f3f4f5] p-4">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[#566167]">Médico</p>
+          <p class="mt-3 font-bold">{{ attendance.doctor }}</p>
+          <p class="text-sm text-[#566167]">
+            {{ attendance.doctorSpeciality ?? 'Especialidade não informada' }}
+          </p>
+        </article>
+      </div>
+      <section class="mt-5">
+        <h3 class="font-bold">Procedimentos</h3>
+        <div class="mt-3 divide-y divide-[#e1e3e4] rounded-xl border border-[#e1e3e4]">
+          @for (procedure of attendance.procedureDetails; track procedure.name) {
+            <div class="flex items-center justify-between gap-4 p-4">
+              <span class="font-medium">{{ procedure.name }}</span
+              ><strong>{{ formatMoney(procedure.price) }}</strong>
+            </div>
+          } @empty {
+            <p class="p-4 text-sm text-[#6f797e]">Sem procedimentos.</p>
+          }
+        </div>
+      </section>
+      <dl class="mt-5 grid gap-3 sm:grid-cols-3">
+        <div class="rounded-xl border border-[#e1e3e4] p-4">
+          <dt class="text-xs text-[#6f797e]">Total</dt>
+          <dd class="mt-1 text-lg font-bold">{{ formatMoney(attendance.total) }}</dd>
+        </div>
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <dt class="text-xs text-emerald-700">Valor pago</dt>
+          <dd class="mt-1 text-lg font-bold text-emerald-700">
+            {{ formatMoney(attendance.amountPaid) }}
+          </dd>
+        </div>
+        <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+          <dt class="text-xs text-red-700">Valor pendente</dt>
+          <dd class="mt-1 text-lg font-bold text-red-700">
+            {{ formatMoney(attendance.pendingAmount) }}
+          </dd>
+        </div>
+      </dl>
+      <div
+        class="mt-5 flex items-center justify-between rounded-xl border p-4 {{
+          paymentStatusClasses(attendance.paymentStatus)
+        }}"
+      >
+        <span class="font-semibold">Estado do pagamento</span
+        ><strong>{{ attendancePaymentLabel(attendance.paymentStatus) }}</strong>
+      </div>
+    </section>
+  </div>
+}
+
 @if (closeConfirmationOpen()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-[#172126]/55 p-4" role="presentation" (click)="cancelCloseConfirmation()">
-    <section class="w-full max-w-xl rounded-2xl bg-white p-5 shadow-2xl sm:p-6" role="dialog" aria-modal="true" aria-labelledby="close-dialog-title" aria-describedby="close-dialog-description" (click)="$event.stopPropagation()">
-      <div class="flex items-start justify-between gap-4"><div><h2 id="close-dialog-title" class="text-2xl font-bold text-[#191c1d]">Confirmar fecho diário</h2><p id="close-dialog-description" class="mt-2 text-sm leading-6 text-[#566167]">Após fechar o dia, os atendimentos desta data não poderão ser alterados ou eliminados.</p></div><button type="button" autofocus class="rounded-lg p-2 text-[#566167] hover:bg-[#f3f4f5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#005d90]" aria-label="Fechar confirmação" (click)="cancelCloseConfirmation()"><span aria-hidden="true" class="material-symbols-outlined" aria-hidden="true">close</span></button></div>
-      <dl class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"><div class="rounded-xl bg-[#f3f4f5] p-4"><dt class="text-xs text-[#6f797e]">Total de atendimentos</dt><dd class="mt-1 text-lg font-bold">{{ viewModel().summary.totalAttendances }}</dd></div><div class="rounded-xl bg-[#f3f4f5] p-4"><dt class="text-xs text-[#6f797e]">Total faturado</dt><dd class="mt-1 text-lg font-bold">{{ formatMoney(viewModel().summary.totalBilled) }}</dd></div><div class="rounded-xl bg-[#f3f4f5] p-4"><dt class="text-xs text-[#6f797e]">Total recebido</dt><dd class="mt-1 text-lg font-bold text-emerald-700">{{ formatMoney(viewModel().summary.totalReceived) }}</dd></div><div class="rounded-xl bg-[#f3f4f5] p-4"><dt class="text-xs text-[#6f797e]">Total pendente</dt><dd class="mt-1 text-lg font-bold text-red-700">{{ formatMoney(viewModel().summary.totalPending) }}</dd></div></dl>
-      <label class="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-[#bfc7d1] p-4"><input type="checkbox" class="mt-0.5 h-5 w-5 accent-[#005d90]" [checked]="closeValuesReviewed()" (change)="updateCloseReview($event)" /><span class="text-sm font-semibold text-[#404850]">Confirmo que revi os valores apresentados</span></label>
-      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" class="min-h-11 rounded-xl px-5 text-sm font-semibold text-[#566167] hover:bg-[#f3f4f5]" (click)="cancelCloseConfirmation()">Cancelar</button><button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#005d90] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-45" [disabled]="!closeValuesReviewed() || closingDay()" (click)="confirmClose()">@if (closingDay()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>A fechar… } @else { <span aria-hidden="true" class="material-symbols-outlined">lock</span>Confirmar fecho }</button></div>
+  <div
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-[#172126]/55 p-4"
+    role="presentation"
+    (click)="cancelCloseConfirmation()"
+  >
+    <section
+      class="w-full max-w-xl rounded-2xl bg-white p-5 shadow-2xl sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="close-dialog-title"
+      aria-describedby="close-dialog-description"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 id="close-dialog-title" class="text-2xl font-bold text-[#191c1d]">
+            Confirmar fecho diário
+          </h2>
+          <p id="close-dialog-description" class="mt-2 text-sm leading-6 text-[#566167]">
+            Após fechar o dia, os atendimentos desta data não poderão ser alterados ou eliminados.
+          </p>
+        </div>
+        <button
+          type="button"
+          autofocus
+          class="rounded-lg p-2 text-[#566167] hover:bg-[#f3f4f5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#005d90]"
+          aria-label="Fechar confirmação"
+          (click)="cancelCloseConfirmation()"
+        >
+          <span aria-hidden="true" class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+      <dl class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="rounded-xl bg-[#f3f4f5] p-4">
+          <dt class="text-xs text-[#6f797e]">Total de atendimentos</dt>
+          <dd class="mt-1 text-lg font-bold">
+            {{ formatSummaryValue(viewModel().summary.totalAttendances, false) }}
+          </dd>
+        </div>
+        <div class="rounded-xl bg-[#f3f4f5] p-4">
+          <dt class="text-xs text-[#6f797e]">Total faturado</dt>
+          <dd class="mt-1 text-lg font-bold">
+            {{ formatSummaryValue(viewModel().summary.totalBilled, true) }}
+          </dd>
+        </div>
+        <div class="rounded-xl bg-[#f3f4f5] p-4">
+          <dt class="text-xs text-[#6f797e]">Total recebido</dt>
+          <dd class="mt-1 text-lg font-bold text-emerald-700">
+            {{ formatSummaryValue(viewModel().summary.totalReceived, true) }}
+          </dd>
+        </div>
+        <div class="rounded-xl bg-[#f3f4f5] p-4">
+          <dt class="text-xs text-[#6f797e]">Total pendente</dt>
+          <dd class="mt-1 text-lg font-bold text-red-700">
+            {{ formatSummaryValue(viewModel().summary.totalPending, true) }}
+          </dd>
+        </div>
+      </dl>
+      <label
+        class="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-[#bfc7d1] p-4"
+        ><input
+          type="checkbox"
+          class="mt-0.5 h-5 w-5 accent-[#005d90]"
+          [checked]="closeValuesReviewed()"
+          (change)="updateCloseReview($event)"
+        /><span class="text-sm font-semibold text-[#404850]"
+          >Confirmo que revi os valores apresentados</span
+        ></label
+      >
+      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          class="min-h-11 rounded-xl px-5 text-sm font-semibold text-[#566167] hover:bg-[#f3f4f5]"
+          (click)="cancelCloseConfirmation()"
+        >
+          Cancelar</button
+        ><button
+          type="button"
+          class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#005d90] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-45"
+          [disabled]="!closeValuesReviewed() || closingDay()"
+          (click)="confirmClose()"
+        >
+          @if (closingDay()) {
+            <span
+              class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            ></span
+            >A fechar…
+          } @else {
+            <span aria-hidden="true" class="material-symbols-outlined">lock</span>Confirmar fecho
+          }
+        </button>
+      </div>
     </section>
   </div>
 }
 
 @if (reopenConfirmationOpen() && isAdmin()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-[#172126]/55 p-4" role="presentation" (click)="cancelReopenConfirmation()">
-    <section class="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl sm:p-6" role="dialog" aria-modal="true" aria-labelledby="reopen-dialog-title" aria-describedby="reopen-dialog-description" (click)="$event.stopPropagation()">
-      <div class="flex items-start justify-between gap-4"><div><h2 id="reopen-dialog-title" class="text-2xl font-bold text-[#191c1d]">Confirmar reabertura do dia</h2><p id="reopen-dialog-description" class="mt-2 text-sm leading-6 text-[#566167]">A reabertura permitirá novamente alterações nos atendimentos desta data. Esta ação ficará registada no histórico de auditoria.</p></div><button type="button" class="rounded-lg p-2 text-[#566167] hover:bg-[#f3f4f5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#005d90]" aria-label="Fechar confirmação de reabertura" (click)="cancelReopenConfirmation()"><span aria-hidden="true" class="material-symbols-outlined" aria-hidden="true">close</span></button></div>
-      <div class="mt-5 flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800"><span aria-hidden="true" class="material-symbols-outlined">warning</span><p><strong>Atenção:</strong> confirme que existe uma necessidade operacional antes de reabrir este dia.</p></div>
-      <div class="mt-5"><label for="reopen-reason" class="mb-1.5 block text-sm font-semibold text-[#404850]">Justificação</label><textarea id="reopen-reason" autofocus rows="4" maxlength="500" class="w-full resize-y rounded-xl border border-[#bfc7d1] bg-white p-3 outline-none focus:border-[#005d90] focus:ring-2 focus:ring-[#94ccff]" [class.border-red-500]="reopenAttempted() && !reopenReason().trim()" [attr.aria-invalid]="reopenAttempted() && !reopenReason().trim()" [value]="reopenReason()" (input)="updateReopenReason($event)" aria-describedby="reopen-reason-error" placeholder="Explique o motivo da reabertura..."></textarea>@if (reopenAttempted() && !reopenReason().trim()) { <p id="reopen-reason-error" class="mt-2 text-sm text-[#ba1a1a]">A justificação é obrigatória.</p> }</div>
-      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" class="min-h-11 rounded-xl px-5 text-sm font-semibold text-[#566167] hover:bg-[#f3f4f5]" (click)="cancelReopenConfirmation()">Cancelar</button><button type="button" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#ba1a1a] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-45" [disabled]="!reopenReason().trim() || reopeningDay()" (click)="confirmReopen()">@if (reopeningDay()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>A reabrir… } @else { <span aria-hidden="true" class="material-symbols-outlined">lock_open</span>Confirmar reabertura }</button></div>
+  <div
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-[#172126]/55 p-4"
+    role="presentation"
+    (click)="cancelReopenConfirmation()"
+  >
+    <section
+      class="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reopen-dialog-title"
+      aria-describedby="reopen-dialog-description"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 id="reopen-dialog-title" class="text-2xl font-bold text-[#191c1d]">
+            Confirmar reabertura do dia
+          </h2>
+          <p id="reopen-dialog-description" class="mt-2 text-sm leading-6 text-[#566167]">
+            A reabertura permitirá novamente alterações nos atendimentos desta data. Esta ação
+            ficará registada no histórico de auditoria.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="rounded-lg p-2 text-[#566167] hover:bg-[#f3f4f5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#005d90]"
+          aria-label="Fechar confirmação de reabertura"
+          (click)="cancelReopenConfirmation()"
+        >
+          <span aria-hidden="true" class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+      <div
+        class="mt-5 flex gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800"
+      >
+        <span aria-hidden="true" class="material-symbols-outlined">warning</span>
+        <p>
+          <strong>Atenção:</strong> confirme que existe uma necessidade operacional antes de reabrir
+          este dia.
+        </p>
+      </div>
+      <div class="mt-5">
+        <label for="reopen-reason" class="mb-1.5 block text-sm font-semibold text-[#404850]"
+          >Justificação</label
+        ><textarea
+          id="reopen-reason"
+          autofocus
+          rows="4"
+          maxlength="500"
+          class="w-full resize-y rounded-xl border border-[#bfc7d1] bg-white p-3 outline-none focus:border-[#005d90] focus:ring-2 focus:ring-[#94ccff]"
+          [class.border-red-500]="reopenAttempted() && !reopenReason().trim()"
+          [attr.aria-invalid]="reopenAttempted() && !reopenReason().trim()"
+          [value]="reopenReason()"
+          (input)="updateReopenReason($event)"
+          aria-describedby="reopen-reason-error"
+          placeholder="Explique o motivo da reabertura..."
+        ></textarea>
+        @if (reopenAttempted() && !reopenReason().trim()) {
+          <p id="reopen-reason-error" class="mt-2 text-sm text-[#ba1a1a]">
+            A justificação é obrigatória.
+          </p>
+        }
+      </div>
+      <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          class="min-h-11 rounded-xl px-5 text-sm font-semibold text-[#566167] hover:bg-[#f3f4f5]"
+          (click)="cancelReopenConfirmation()"
+        >
+          Cancelar</button
+        ><button
+          type="button"
+          class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#ba1a1a] px-5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-45"
+          [disabled]="!reopenReason().trim() || reopeningDay()"
+          (click)="confirmReopen()"
+        >
+          @if (reopeningDay()) {
+            <span
+              class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            ></span
+            >A reabrir…
+          } @else {
+            <span aria-hidden="true" class="material-symbols-outlined">lock_open</span>Confirmar
+            reabertura
+          }
+        </button>
+      </div>
     </section>
   </div>
 }

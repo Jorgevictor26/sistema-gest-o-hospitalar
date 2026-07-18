@@ -21,9 +21,12 @@ export class AdminDashboardService {
       dashboard: this.http.get<AdminDashboardResponse>(`${environment.apiUrl}/dashboard`, {
         params: dashboardParams,
       }),
-      attendances: this.http.get<AttendanceCollectionResponse>(`${environment.apiUrl}/attendances`, {
-        params: attendanceParams,
-      }),
+      attendances: this.http.get<AttendanceCollectionResponse>(
+        `${environment.apiUrl}/attendances`,
+        {
+          params: attendanceParams,
+        },
+      ),
     }).pipe(
       map(({ dashboard, attendances }) => ({
         dashboard,

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -26,7 +34,9 @@ export class AdminDashboardComponent {
   });
   protected readonly paidPercentage = computed(() => {
     const total = this.paymentTotal();
-    return total ? Math.round(((this.data()?.dashboard.report.payment_status.paid ?? 0) / total) * 100) : 0;
+    return total
+      ? Math.round(((this.data()?.dashboard.report.payment_status.paid ?? 0) / total) * 100)
+      : 0;
   });
   protected readonly paymentChart = computed(() => {
     const status = this.data()?.dashboard.report.payment_status;
@@ -54,7 +64,7 @@ export class AdminDashboardComponent {
       )
       .subscribe({
         next: (data) => this.data.set(data),
-        error: () => this.errorMessage.set('Não foi possível carregar o dashboard. Tente novamente.'),
+        error: (error: unknown) => this.errorMessage.set(this.requestErrorMessage(error)),
       });
   }
 
@@ -72,5 +82,19 @@ export class AdminDashboardComponent {
 
   protected procedureNames(attendance: RecentAttendance): string {
     return attendance.procedures.map((procedure) => procedure.procedure).join(', ');
+  }
+
+  private requestErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        return 'A API não está disponível em localhost:8000. Confirme que o backend Laravel está em execução.';
+      }
+      if (error.status === 401) return 'A sessão expirou. Inicie sessão novamente.';
+      if (error.status === 403)
+        return 'Não tem permissão para consultar o dashboard administrativo.';
+      if (error.status >= 500) return 'O backend encontrou um erro ao carregar o dashboard.';
+    }
+
+    return 'Não foi possível carregar o dashboard. Confirme a ligação ao backend e tente novamente.';
   }
 }
