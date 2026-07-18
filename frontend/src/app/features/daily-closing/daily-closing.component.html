@@ -1,24 +1,12 @@
 <div
   class="mx-auto flex w-full max-w-[1440px] flex-col gap-6 overflow-x-hidden p-4 sm:p-6 lg:p-8 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-[#005d90] [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-[#005d90]"
 >
-  <nav
-    class="flex flex-wrap items-center gap-1 text-xs text-[#566167]"
-    aria-label="Navegação estrutural"
-  >
-    <a routerLink="/dashboard" class="hover:text-[#005d90]">Gestão clínica</a
-    ><span aria-hidden="true" class="material-symbols-outlined text-base">chevron_right</span
-    ><span>Financeiro</span
-    ><span aria-hidden="true" class="material-symbols-outlined text-base">chevron_right</span
-    ><span class="font-semibold text-[#005d90]">Fecho diário</span>
-  </nav>
-
   <header class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight text-[#191c1d]">Fecho diário</h1>
-      <p class="mt-1 text-lg font-semibold text-[#404850]">
-        {{ formatDate(viewModel().selectedDate) }}
-      </p>
-      <div class="mt-2 flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center gap-3">
+        <p class="text-lg font-semibold text-[#404850]">
+          {{ formatDate(viewModel().selectedDate) }}
+        </p>
         @if (viewModel().state === 'closed') {
           <span
             class="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700"
@@ -60,25 +48,30 @@
           }
         </button>
       }
-      @if (viewModel().state === 'closed') {
-        <button
-          type="button"
-          class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
-          [disabled]="exportingPdf()"
-          (click)="showUnavailable('A exportação PDF')"
-        >
-          <span aria-hidden="true" class="material-symbols-outlined text-lg">picture_as_pdf</span
-          >Exportar PDF
-        </button>
-        <button
-          type="button"
-          class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
-          [disabled]="exportingCsv()"
-          (click)="showUnavailable('A exportação CSV')"
-        >
-          <span aria-hidden="true" class="material-symbols-outlined text-lg">csv</span>Exportar CSV
-        </button>
-      }
+      <button
+        type="button"
+        class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
+        [disabled]="exportingPdf()"
+        (click)="showUnavailable('A exportação PDF')"
+      >
+        <span aria-hidden="true" class="material-symbols-outlined text-lg">picture_as_pdf</span
+        >Exportar PDF
+      </button>
+      <button
+        type="button"
+        class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
+        [disabled]="exportingCsv()"
+        (click)="showUnavailable('A exportação CSV')"
+      >
+        <span aria-hidden="true" class="material-symbols-outlined text-lg">csv</span>Exportar CSV
+      </button>
+      <button
+        type="button"
+        class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#bfc7d1] bg-white px-4 text-sm font-semibold text-[#404850] hover:border-[#005d90] hover:text-[#005d90] sm:w-auto"
+        (click)="showUnavailable('A impressão')"
+      >
+        <span aria-hidden="true" class="material-symbols-outlined text-lg">print</span>Imprimir
+      </button>
       @if (viewModel().state === 'open' && viewModel().permissions.canClose) {
         <button
           type="button"
@@ -98,55 +91,6 @@
       }
     </div>
   </header>
-
-  <section class="flex flex-wrap items-center gap-2" aria-label="Navegar por data">
-    <button
-      type="button"
-      class="flex h-10 w-10 items-center justify-center rounded-full border border-[#d4d9dc] bg-white text-[#404850] hover:bg-[#f3f4f5]"
-      [disabled]="viewModel().loading.page"
-      aria-label="Dia anterior"
-      (click)="changeDay(-1)"
-    >
-      <span aria-hidden="true" class="material-symbols-outlined">chevron_left</span>
-    </button>
-    <button
-      type="button"
-      class="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d4d9dc] bg-white px-4 text-sm font-semibold text-[#404850] hover:bg-[#f3f4f5]"
-      [disabled]="viewModel().loading.page"
-      (click)="openDatePicker(closingDate)"
-    >
-      <span aria-hidden="true" class="material-symbols-outlined text-lg">calendar_month</span>
-      {{ formatShortDate(viewModel().selectedDate) }}
-    </button>
-    <button
-      type="button"
-      class="flex h-10 w-10 items-center justify-center rounded-full border border-[#d4d9dc] bg-white text-[#404850] hover:bg-[#f3f4f5] disabled:opacity-40"
-      [disabled]="viewModel().loading.page || viewModel().selectedDate >= maximumDate"
-      aria-label="Dia seguinte"
-      (click)="changeDay(1)"
-    >
-      <span aria-hidden="true" class="material-symbols-outlined">chevron_right</span>
-    </button>
-    <button
-      type="button"
-      class="min-h-10 rounded-full border px-5 text-sm font-semibold transition"
-      [class]="dateFilterClasses(viewModel().selectedDate === maximumDate)"
-      [disabled]="viewModel().loading.page"
-      (click)="selectDate(maximumDate)"
-    >
-      Hoje
-    </button>
-    <input
-      #closingDate
-      id="closing-date"
-      type="date"
-      class="sr-only"
-      [value]="viewModel().selectedDate"
-      [max]="maximumDate"
-      (change)="updateDate($event)"
-      aria-label="Escolher uma data"
-    />
-  </section>
 
   @if (actionNotice(); as notice) {
     <div
@@ -198,30 +142,6 @@
     </div>
   }
 
-  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Resumo do dia">
-    @for (card of summaryCards(); track card.label) {
-      <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm">
-        @if (viewModel().loading.summary) {
-          <div class="animate-pulse" role="status" aria-label="A carregar resumo">
-            <div class="h-10 w-10 rounded-xl bg-[#e1e3e4]"></div>
-            <div class="mt-5 h-8 w-28 rounded bg-[#e1e3e4]"></div>
-            <div class="mt-2 h-4 w-36 rounded bg-[#edf0f1]"></div>
-          </div>
-        } @else {
-          <span
-            aria-hidden="true"
-            class="material-symbols-outlined rounded-xl bg-[#e4f3fa] p-2 text-[#005d90]"
-            >{{ card.icon }}</span
-          >
-          <p class="mt-5 text-2xl font-bold text-[#191c1d]">
-            {{ formatSummaryValue(card.value, card.money) }}
-          </p>
-          <p class="mt-1 text-sm text-[#566167]">{{ card.label }}</p>
-        }
-      </article>
-    }
-  </section>
-
   <nav
     class="flex gap-2 overflow-x-auto border-b border-[#e1e3e4] pb-4"
     aria-label="Secções do fecho diário"
@@ -229,7 +149,7 @@
     <button
       type="button"
       class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
-      [class]="dateFilterClasses(summaryView() === 'general')"
+      [class]="tabClasses(summaryView() === 'general')"
       (click)="summaryView.set('general')"
     >
       Resumo geral
@@ -237,7 +157,7 @@
     <button
       type="button"
       class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
-      [class]="dateFilterClasses(summaryView() === 'doctor')"
+      [class]="tabClasses(summaryView() === 'doctor')"
       (click)="summaryView.set('doctor')"
     >
       Por médico
@@ -245,49 +165,37 @@
     <button
       type="button"
       class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
-      [class]="dateFilterClasses(summaryView() === 'procedure')"
+      [class]="tabClasses(summaryView() === 'procedure')"
       (click)="summaryView.set('procedure')"
     >
       Por procedimento
     </button>
-    <button
-      type="button"
-      class="min-h-10 shrink-0 rounded-full border px-5 text-sm font-semibold transition"
-      [class]="dateFilterClasses(summaryView() === 'attendances')"
-      (click)="summaryView.set('attendances')"
-    >
-      Atendimentos
-    </button>
   </nav>
 
   @if (summaryView() === 'general') {
-    <section class="grid gap-6 lg:grid-cols-2">
-      <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm sm:p-6">
-        <h2 class="text-xl font-bold">Estado dos pagamentos</h2>
-        <div class="mt-5 grid gap-3 sm:grid-cols-3">
-          @for (payment of viewModel().paymentStatuses; track payment.status) {
-            <div class="rounded-xl border p-4 {{ paymentStatusClasses(payment.status) }}">
-              <p class="text-sm font-semibold">{{ paymentStatusLabel(payment.status) }}</p>
-              <p class="mt-2 text-2xl font-bold">{{ payment.total }}</p>
+    <section
+      class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+      aria-label="Totais do dia"
+    >
+      @for (card of summaryCards(); track card.label) {
+        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm">
+          @if (viewModel().loading.summary) {
+            <div class="animate-pulse" role="status" aria-label="A carregar resumo">
+              <div class="h-10 w-10 rounded-xl bg-[#e1e3e4]"></div>
+              <div class="mt-5 h-8 w-24 rounded bg-[#e1e3e4]"></div>
+              <div class="mt-2 h-4 w-28 rounded bg-[#edf0f1]"></div>
             </div>
-          } @empty {
-            <p class="col-span-full rounded-xl bg-[#f3f4f5] p-6 text-center text-sm text-[#6f797e]">
-              Sem dados de pagamentos.
+          } @else {
+            <span
+              aria-hidden="true"
+              class="material-symbols-outlined rounded-xl bg-[#e4f3fa] p-2 text-[#005d90]"
+              >{{ card.icon }}</span
+            >
+            <p class="mt-5 text-2xl font-bold text-[#191c1d]">
+              {{ formatSummaryValue(card.value, card.money) }}
             </p>
+            <p class="mt-1 text-sm text-[#566167]">{{ card.label }}</p>
           }
-        </div>
-      </article>
-      @if (viewModel().paymentMethods.length > 0) {
-        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-sm sm:p-6">
-          <h2 class="text-xl font-bold">Métodos de pagamento</h2>
-          <div class="mt-5 grid grid-cols-2 gap-3">
-            @for (payment of viewModel().paymentMethods; track payment.method) {
-              <div class="rounded-xl border border-[#bfc7d1] bg-[#f3f4f5] p-4">
-                <p class="text-xs text-[#6f797e]">{{ payment.method }}</p>
-                <p class="mt-1 text-sm font-bold">{{ formatMoney(payment.amount) }}</p>
-              </div>
-            }
-          </div>
         </article>
       }
     </section>
@@ -298,7 +206,7 @@
       <div class="border-b border-[#e1e3e4] p-5 sm:p-6">
         <h2 class="text-xl font-bold">Resumo por médico</h2>
         <p class="mt-1 text-sm text-[#6f797e]">
-          Movimento clínico e financeiro do dia selecionado.
+          Selecione um médico para consultar os atendimentos disponíveis daquele profissional.
         </p>
         @if (viewModel().errors.doctors; as error) {
           <p class="mt-2 text-xs font-semibold text-amber-700">{{ error }}</p>
@@ -316,21 +224,30 @@
         </div>
       } @else {
         <div class="overflow-x-auto">
-          <table class="w-full min-w-[900px] text-left">
+          <table class="w-full min-w-[980px] text-left">
             <thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]">
               <tr>
                 <th scope="col" class="px-5 py-4">Médico</th>
                 <th scope="col" class="px-5 py-4">Especialidade</th>
                 <th scope="col" class="px-5 py-4 text-center">Pacientes</th>
                 <th scope="col" class="px-5 py-4 text-center">Atendimentos</th>
-                <th scope="col" class="px-5 py-4 text-right">Total faturado</th>
-                <th scope="col" class="px-5 py-4 text-right">Total recebido</th>
-                <th scope="col" class="px-5 py-4 text-right">Total pendente</th>
+                <th scope="col" class="px-5 py-4 text-center">Procedimentos</th>
+                <th scope="col" class="px-5 py-4">Procedimentos realizados</th>
+                <th scope="col" class="px-5 py-4 text-right">Total gerado</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-[#e1e3e4]">
               @for (doctor of viewModel().doctors; track doctor.id) {
-                <tr class="hover:bg-[#f8f9fa]">
+                <tr
+                  [class]="
+                    selectedDoctorId() === doctor.id
+                      ? 'cursor-pointer bg-[#e4f3fa] hover:bg-[#d8edf7]'
+                      : 'cursor-pointer hover:bg-[#f8f9fa]'
+                  "
+                  tabindex="0"
+                  (click)="selectDoctor(doctor.id)"
+                  (keydown.enter)="selectDoctor(doctor.id)"
+                >
                   <td class="px-5 py-4">
                     <div class="flex items-center gap-3">
                       <span
@@ -342,14 +259,10 @@
                   <td class="px-5 py-4 text-sm text-[#566167]">{{ doctor.speciality }}</td>
                   <td class="px-5 py-4 text-center font-semibold">{{ doctor.patients ?? '—' }}</td>
                   <td class="px-5 py-4 text-center font-semibold">{{ doctor.attendances }}</td>
-                  <td class="px-5 py-4 text-right font-semibold">
+                  <td class="px-5 py-4 text-center font-semibold">—</td>
+                  <td class="px-5 py-4 text-sm text-[#566167]">—</td>
+                  <td class="px-5 py-4 text-right font-semibold text-[#005d90]">
                     {{ formatMoney(doctor.totalBilled) }}
-                  </td>
-                  <td class="px-5 py-4 text-right font-semibold text-emerald-700">
-                    {{ formatMoney(doctor.totalReceived) }}
-                  </td>
-                  <td class="px-5 py-4 text-right font-semibold text-red-700">
-                    {{ formatMoney(doctor.totalPending) }}
                   </td>
                 </tr>
               } @empty {
@@ -364,13 +277,80 @@
         </div>
       }
     </section>
+    @if (selectedDoctor(); as doctor) {
+      <section class="mt-6 overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
+        <div class="border-b border-[#e1e3e4] p-5">
+          <h3 class="text-lg font-bold">Atendimentos de {{ doctor.doctor }}</h3>
+          <p class="mt-1 text-sm text-[#6f797e]">
+            Atendimentos encontrados nos dados atualmente carregados.
+          </p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[760px] text-left">
+            <thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]">
+              <tr>
+                <th class="px-5 py-4">Paciente</th>
+                <th class="px-5 py-4">Procedimento</th>
+                <th class="px-5 py-4">Hora</th>
+                <th class="px-5 py-4 text-right">Total</th>
+                <th class="px-5 py-4">Estado</th>
+                <th class="px-5 py-4 text-center">Ação</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#e1e3e4]">
+              @for (attendance of selectedDoctorAttendances(); track attendance.id) {
+                <tr class="cursor-pointer hover:bg-[#f8f9fa]" (click)="openAttendance(attendance)">
+                  <td class="px-5 py-4 font-semibold">{{ attendance.patient }}</td>
+                  <td class="px-5 py-4">
+                    {{ firstProcedure(attendance) }}
+                    @if (otherProceduresCount(attendance) > 0) {
+                      <span class="ml-1 font-bold text-[#005d90]"
+                        >+{{ otherProceduresCount(attendance) }}</span
+                      >
+                    }
+                  </td>
+                  <td class="px-5 py-4">{{ formatAttendanceTime(attendance.time) }}</td>
+                  <td class="px-5 py-4 text-right font-semibold">
+                    {{ formatMoney(attendance.total) }}
+                  </td>
+                  <td class="px-5 py-4">
+                    <span
+                      class="rounded-full border px-2.5 py-1 text-xs font-semibold {{
+                        paymentStatusClasses(attendance.paymentStatus)
+                      }}"
+                      >{{ attendancePaymentLabel(attendance.paymentStatus) }}</span
+                    >
+                  </td>
+                  <td class="px-5 py-4 text-center">
+                    <button
+                      type="button"
+                      class="rounded-lg p-2 text-[#005d90] hover:bg-[#e4f3fa]"
+                      aria-label="Visualizar atendimento"
+                      (click)="$event.stopPropagation(); openAttendance(attendance)"
+                    >
+                      <span aria-hidden="true" class="material-symbols-outlined">visibility</span>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="px-5 py-10 text-center text-sm text-[#6f797e]">
+                    Nenhum atendimento deste médico está presente na página carregada.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
   }
 
   @if (summaryView() === 'procedure') {
     <section class="overflow-hidden rounded-2xl border border-[#bfc7d1] bg-white shadow-sm">
       <div class="border-b border-[#e1e3e4] p-5 sm:p-6">
         <h2 class="text-xl font-bold">Resumo por procedimento</h2>
-        <p class="mt-1 text-sm text-[#6f797e]">Procedimentos registados no dia selecionado.</p>
+        <p class="mt-1 text-sm text-[#6f797e]">Procedimentos realizados hoje.</p>
         @if (viewModel().errors.procedures; as error) {
           <p class="mt-2 text-xs font-semibold text-amber-700">{{ error }}</p>
         }
@@ -387,12 +367,13 @@
         </div>
       } @else {
         <div class="overflow-x-auto">
-          <table class="w-full min-w-[640px] text-left">
+          <table class="w-full min-w-[820px] text-left">
             <thead class="bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]">
               <tr>
                 <th scope="col" class="px-5 py-4">Procedimento</th>
-                <th scope="col" class="px-5 py-4 text-center">Quantidade</th>
-                <th scope="col" class="px-5 py-4 text-right">Preço aplicado ou médio</th>
+                <th scope="col" class="px-5 py-4 text-center">Quantidade realizada</th>
+                <th scope="col" class="px-5 py-4 text-center">Pacientes</th>
+                <th scope="col" class="px-5 py-4">Médicos</th>
                 <th scope="col" class="px-5 py-4 text-right">Total gerado</th>
               </tr>
             </thead>
@@ -401,18 +382,15 @@
                 <tr class="hover:bg-[#f8f9fa]">
                   <td class="px-5 py-4 font-semibold">{{ procedure.procedure }}</td>
                   <td class="px-5 py-4 text-center font-semibold">{{ procedure.quantity }}</td>
-                  <td class="px-5 py-4 text-right">
-                    {{
-                      procedure.appliedPrice === null ? '—' : formatMoney(procedure.appliedPrice)
-                    }}
-                  </td>
+                  <td class="px-5 py-4 text-center">—</td>
+                  <td class="px-5 py-4 text-sm text-[#566167]">—</td>
                   <td class="px-5 py-4 text-right font-bold text-[#005d90]">
                     {{ formatMoney(procedure.totalGenerated) }}
                   </td>
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="4" class="px-5 py-12 text-center text-sm text-[#6f797e]">
+                  <td colspan="5" class="px-5 py-12 text-center text-sm text-[#6f797e]">
                     Nenhum procedimento disponível.
                   </td>
                 </tr>
@@ -425,61 +403,6 @@
   }
 
   @if (summaryView() === 'general') {
-    <section class="grid grid-cols-1 gap-6 lg:grid-cols-12">
-      <article
-        class="rounded-2xl border border-[#e1e3e4] bg-white/90 p-5 shadow-sm sm:p-6 lg:col-span-12"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xl font-bold">
-              Resumo do {{ viewModel().state === 'closed' ? 'encerramento' : 'dia' }}
-            </h2>
-            @if (viewModel().state === 'open') {
-              <p class="mt-1 text-xs font-semibold text-amber-700">Valores provisórios</p>
-            }
-          </div>
-          <span aria-hidden="true" class="material-symbols-outlined text-[#005d90]">summarize</span>
-        </div>
-        <div class="mt-6 grid gap-5 border-t border-[#bfc7d1] pt-6 sm:grid-cols-2">
-          @if (viewModel().state === 'closed') {
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">
-                Data e hora do fecho
-              </p>
-              <p class="mt-2 flex items-center gap-2 font-semibold">
-                <span aria-hidden="true" class="material-symbols-outlined text-[#005d90]"
-                  >schedule</span
-                >{{ formatClosedAt() }}
-              </p>
-            </div>
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">
-                Fechado por
-              </p>
-              <p class="mt-2 flex items-center gap-2 font-semibold">
-                <span aria-hidden="true" class="material-symbols-outlined text-[#005d90]"
-                  >person</span
-                >{{ viewModel().closure.closedBy ?? '—' }}
-              </p>
-            </div>
-          } @else {
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">Estado</p>
-              <p class="mt-2 font-semibold text-amber-700">Em atualização</p>
-            </div>
-            <div>
-              <p class="text-xs font-semibold uppercase tracking-wider text-[#6f797e]">
-                Data consultada
-              </p>
-              <p class="mt-2 font-semibold">{{ formatShortDate(viewModel().selectedDate) }}</p>
-            </div>
-          }
-        </div>
-      </article>
-    </section>
-  }
-
-  @if (summaryView() === 'attendances') {
     <section class="flex flex-col gap-4">
       <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
@@ -539,34 +462,34 @@
             </div>
           } @else {
             <div class="overflow-x-auto">
-              <table class="w-full min-w-[1180px] text-left">
+              <table class="w-full min-w-[1080px] text-left">
                 <thead
                   class="border-b border-[#bfc7d1] bg-[#f3f4f5] text-xs uppercase tracking-wide text-[#566167]"
                 >
                   <tr>
-                    <th scope="col" class="px-4 py-4">Código</th>
                     <th scope="col" class="px-4 py-4">Paciente</th>
                     <th scope="col" class="px-4 py-4">Médico</th>
-                    <th scope="col" class="px-4 py-4">Procedimentos</th>
+                    <th scope="col" class="px-4 py-4">Procedimento</th>
+                    <th scope="col" class="px-4 py-4">Hora</th>
                     <th scope="col" class="px-4 py-4 text-right">Total</th>
                     <th scope="col" class="px-4 py-4 text-right">Valor pago</th>
-                    <th scope="col" class="px-4 py-4 text-right">Valor pendente</th>
                     <th scope="col" class="px-4 py-4">Estado</th>
-                    <th scope="col" class="px-4 py-4">Registado às</th>
                     <th scope="col" class="px-4 py-4 text-center">Ação</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-[#e1e3e4]">
                   @for (attendance of paginatedAttendances(); track attendance.id) {
-                    <tr class="hover:bg-[#f8f9fa]">
-                      <td class="px-4 py-4 text-sm font-semibold text-[#005d90]">
-                        {{ attendance.code }}
-                      </td>
+                    <tr
+                      class="cursor-pointer hover:bg-[#f8f9fa] focus-within:bg-[#f8f9fa]"
+                      tabindex="0"
+                      (click)="openAttendance(attendance)"
+                      (keydown.enter)="openAttendance(attendance)"
+                    >
                       <td class="px-4 py-4">
                         <button
                           type="button"
                           class="flex items-center gap-3 text-left hover:text-[#005d90]"
-                          (click)="openAttendance(attendance)"
+                          (click)="$event.stopPropagation(); openAttendance(attendance)"
                         >
                           <span
                             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#50d9fe]/20 text-xs font-bold text-[#005c70]"
@@ -580,15 +503,21 @@
                           attendance.doctorSpeciality ?? '—'
                         }}</span>
                       </td>
-                      <td class="px-4 py-4 text-sm">{{ attendance.procedures.join(', ') }}</td>
+                      <td class="px-4 py-4 text-sm">
+                        <span class="font-medium">{{ firstProcedure(attendance) }}</span>
+                        @if (otherProceduresCount(attendance) > 0) {
+                          <span
+                            class="ml-2 rounded-full bg-[#e4f3fa] px-2 py-0.5 text-xs font-bold text-[#005d90]"
+                            >+{{ otherProceduresCount(attendance) }}</span
+                          >
+                        }
+                      </td>
+                      <td class="px-4 py-4 text-sm">{{ formatAttendanceTime(attendance.time) }}</td>
                       <td class="px-4 py-4 text-right font-semibold">
                         {{ formatMoney(attendance.total) }}
                       </td>
                       <td class="px-4 py-4 text-right font-semibold text-emerald-700">
                         {{ formatMoney(attendance.amountPaid) }}
-                      </td>
-                      <td class="px-4 py-4 text-right font-semibold text-red-700">
-                        {{ formatMoney(attendance.pendingAmount) }}
                       </td>
                       <td class="px-4 py-4">
                         <span
@@ -598,13 +527,12 @@
                           >{{ attendancePaymentLabel(attendance.paymentStatus) }}</span
                         >
                       </td>
-                      <td class="px-4 py-4 text-sm">{{ formatAttendanceTime(attendance.time) }}</td>
                       <td class="px-4 py-4 text-center">
                         <button
                           type="button"
                           class="rounded-lg p-2 text-[#005d90] hover:bg-[#e4f3fa]"
                           aria-label="Visualizar atendimento"
-                          (click)="openAttendance(attendance)"
+                          (click)="$event.stopPropagation(); openAttendance(attendance)"
                         >
                           <span aria-hidden="true" class="material-symbols-outlined"
                             >visibility</span
@@ -614,7 +542,7 @@
                     </tr>
                   } @empty {
                     <tr>
-                      <td colspan="10" class="px-5 py-14 text-center">
+                      <td colspan="8" class="px-5 py-14 text-center">
                         <span
                           aria-hidden="true"
                           class="material-symbols-outlined text-4xl text-[#aeb6ba]"

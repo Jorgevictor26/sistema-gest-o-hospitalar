@@ -9,7 +9,6 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
@@ -20,7 +19,7 @@ import { ClosingAttendance, createDailyClosingViewModel } from './daily-closing.
 @Component({
   selector: 'app-daily-closing',
   standalone: true,
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './daily-closing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,15 +37,18 @@ export class DailyClosingComponent {
   });
 
   protected readonly user = this.authService.currentUser;
-  protected readonly maximumDate = this.today();
+  protected readonly currentDate = this.today();
   protected readonly viewModel = signal(
-    createDailyClosingViewModel(this.today(), this.user()?.roles.includes('admin') ?? false, true),
+    createDailyClosingViewModel(
+      this.currentDate,
+      this.user()?.roles.includes('admin') ?? false,
+      true,
+    ),
   );
   protected readonly search = signal('');
   protected readonly paymentStatusFilter = signal<'' | 'paid' | 'partial' | 'unpaid'>('');
-  protected readonly summaryView = signal<'general' | 'doctor' | 'procedure' | 'attendances'>(
-    'general',
-  );
+  protected readonly summaryView = signal<'general' | 'doctor' | 'procedure'>('general');
+  protected readonly selectedDoctorId = signal<number | null>(null);
   protected readonly selectedAttendance = signal<ClosingAttendance | null>(null);
   protected readonly attendancePage = signal(1);
   protected readonly attendancePageSize = 15;
@@ -65,7 +67,7 @@ export class DailyClosingComponent {
     () =>
       [
         {
-          label: 'Total de pacientes',
+          label: 'Total de pacientes atendidos',
           value: this.viewModel().summary.totalPatients,
           money: false,
           icon: 'groups',
@@ -75,6 +77,12 @@ export class DailyClosingComponent {
           value: this.viewModel().summary.totalAttendances,
           money: false,
           icon: 'clinical_notes',
+        },
+        {
+          label: 'Total de marcações',
+          value: null,
+          money: false,
+          icon: 'event',
         },
         {
           label: 'Total faturado',
@@ -101,12 +109,26 @@ export class DailyClosingComponent {
     () => this.viewModel().attendancePagination.lastPage,
   );
   protected readonly paginatedAttendances = computed(() => this.filteredAttendances());
+  protected readonly selectedDoctor = computed(() => {
+    const id = this.selectedDoctorId();
+    return id === null
+      ? null
+      : (this.viewModel().doctors.find((doctor) => doctor.id === id) ?? null);
+  });
+  protected readonly selectedDoctorAttendances = computed(() => {
+    const doctor = this.selectedDoctor();
+    if (!doctor) return [];
+    return this.viewModel().attendances.filter(
+      (attendance) =>
+        attendance.doctor.trim().toLocaleLowerCase() === doctor.doctor.trim().toLocaleLowerCase(),
+    );
+  });
 
   constructor() {
     this.searchChanges
       .pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.loadAttendances(this.viewModel().selectedDate, 1));
-    this.loadDailyClosing(this.viewModel().selectedDate);
+      .subscribe(() => this.loadAttendances(this.currentDate, 1));
+    this.loadDailyClosing(this.currentDate);
   }
 
   protected updateSearch(event: Event): void {
@@ -120,7 +142,7 @@ export class DailyClosingComponent {
     this.paymentStatusFilter.set(
       (event.target as HTMLSelectElement).value as '' | 'paid' | 'partial' | 'unpaid',
     );
-    this.loadAttendances(this.viewModel().selectedDate, 1);
+    this.loadAttendances(this.currentDate, 1);
   }
 
   @HostListener('document:keydown.escape')
@@ -132,46 +154,37 @@ export class DailyClosingComponent {
 
   protected changeAttendancePage(page: number): void {
     if (page < 1 || page > this.attendanceTotalPages()) return;
-    this.loadAttendances(this.viewModel().selectedDate, page);
+    this.loadAttendances(this.currentDate, page);
   }
 
-  protected updateDate(event: Event): void {
-    const date = (event.target as HTMLInputElement).value;
-    if (!date || date > this.maximumDate) return;
-    this.loadDailyClosing(date);
-  }
-
-  protected selectDate(date: string): void {
-    this.loadDailyClosing(date);
-  }
-
-  protected changeDay(days: number): void {
-    const date = this.shiftDate(this.viewModel().selectedDate, days);
-    if (date > this.maximumDate) return;
-    this.loadDailyClosing(date);
-  }
-
-  protected openDatePicker(input: HTMLInputElement): void {
-    if (typeof input.showPicker === 'function') input.showPicker();
-    else input.click();
-  }
-
-  protected dateFilterClasses(active: boolean): string {
+  protected tabClasses(active: boolean): string {
     return active
       ? 'border-[#005d90] bg-[#005d90] text-white shadow-sm'
       : 'border-[#d4d9dc] bg-white text-[#404850] hover:border-[#8a9499] hover:bg-[#f3f4f5]';
   }
 
   protected retry(): void {
-    this.loadDailyClosing(this.viewModel().selectedDate);
+    this.loadDailyClosing(this.currentDate);
   }
 
   protected retryAttendances(): void {
-    this.loadAttendances(this.viewModel().selectedDate, this.attendancePage());
+    this.loadAttendances(this.currentDate, this.attendancePage());
   }
 
   protected openAttendance(attendance: ClosingAttendance): void {
     this.selectedAttendance.set(attendance);
+  }
+
+  protected selectDoctor(doctorId: number): void {
+    this.selectedDoctorId.set(this.selectedDoctorId() === doctorId ? null : doctorId);
+  }
+
+  protected firstProcedure(attendance: ClosingAttendance): string {
+    return attendance.procedures[0] ?? 'Sem procedimento';
+  }
+
+  protected otherProceduresCount(attendance: ClosingAttendance): number {
+    return Math.max(attendance.procedures.length - 1, 0);
   }
 
   protected formatAttendanceTime(value: string): string {
@@ -317,12 +330,6 @@ export class DailyClosingComponent {
       day: '2-digit',
       timeZone: 'Africa/Luanda',
     }).format(date);
-  }
-
-  private shiftDate(date: string, days: number): string {
-    const value = new Date(`${date}T12:00:00+01:00`);
-    value.setTime(value.getTime() + days * 86_400_000);
-    return this.isoDate(value);
   }
 
   private loadDailyClosing(date: string): void {
