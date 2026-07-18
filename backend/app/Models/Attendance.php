@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Attendance extends Model
@@ -50,6 +51,11 @@ class Attendance extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class)->latest('paid_at');
+    }
+
+    public function appointment(): HasOne
+    {
+        return $this->hasOne(Appointment::class);
     }
 
     public function pendingAmount(): float

@@ -55,6 +55,16 @@ class User extends Authenticatable
         return $this->hasMany(Attendance::class, 'registered_by');
     }
 
+    public function scheduledAppointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class, 'scheduled_by');
+    }
+
+    public function cancelledAppointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class, 'cancelled_by');
+    }
+
     public function casts(): array
     {
         return [

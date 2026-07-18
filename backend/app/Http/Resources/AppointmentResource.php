@@ -13,11 +13,18 @@ class AppointmentResource extends JsonResource
         return [
             'id' => $this->id,
             'scheduled_at' => $this->scheduled_at,
+            'duration_minutes' => $this->duration_minutes,
+            'reason' => $this->reason,
             'status' => $this->status,
             'notes' => $this->notes,
             'patient' => ['id' => $this->patient->id, 'name' => $this->patient->name, 'phone_number' => $this->patient->phone_number],
             'doctor' => ['id' => $this->doctor->id, 'name' => $this->doctor->user->name, 'speciality' => $this->doctor->speciality],
-            'created_by' => ['id' => $this->createdBy->id, 'name' => $this->createdBy->name],
+            'scheduled_by' => ['id' => $this->scheduledBy->id, 'name' => $this->scheduledBy->name],
+            'cancelled_by' => $this->whenLoaded('cancelledBy', fn () => $this->cancelledBy
+                ? ['id' => $this->cancelledBy->id, 'name' => $this->cancelledBy->name]
+                : null),
+            'cancelled_at' => $this->cancelled_at,
+            'cancellation_reason' => $this->cancellation_reason,
         ];
     }
 }

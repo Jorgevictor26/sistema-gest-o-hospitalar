@@ -2,63 +2,106 @@
 
 namespace App\Services;
 
+use App\DTOs\CancelAppointmentDTO;
+use App\DTOs\ChangeAppointmentStatusDTO;
+use App\DTOs\CreateAppointmentDTO;
+use App\DTOs\RescheduleAppointmentDTO;
 use App\Models\Appointment;
-use App\Models\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Repositories\AppointmentRepository;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class AppointmentService
 {
-    public function list(array $filters, User $user): LengthAwarePaginator
-    {
-        return Appointment::query()
-            ->with(['patient', 'doctor.user', 'createdBy'])
-            ->when($user->hasRole('doctor') && ! $user->hasAnyRole(['admin', 'receptionist']), fn ($query) => $query->whereHas('doctor', fn ($query) => $query->where('user_id', $user->id)))
-            ->when($filters['date'] ?? null, fn ($query, $date) => $query->whereDate('scheduled_at', $date))
-            ->when($filters['date_from'] ?? null, fn ($query, $date) => $query->whereDate('scheduled_at', '>=', $date))
-            ->when($filters['date_to'] ?? null, fn ($query, $date) => $query->whereDate('scheduled_at', '<=', $date))
-            ->when($filters['doctor_id'] ?? null, fn ($query, $id) => $query->where('doctor_id', $id))
-            ->when($filters['patient_id'] ?? null, fn ($query, $id) => $query->where('patient_id', $id))
-            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
-            ->orderBy('scheduled_at')
-            ->paginate($filters['per_page'] ?? 15)
-            ->withQueryString();
-    }
+    public function __construct(private readonly AppointmentRepository $appointments) {}
 
-    public function create(array $data, User $creator): Appointment
+    public function create(CreateAppointmentDTO $data): Appointment
     {
-        $this->ensureSlotAvailable($data['doctor_id'], $data['scheduled_at']);
-
-        return Appointment::create([...$data, 'created_by' => $creator->id])
-            ->load(['patient', 'doctor.user', 'createdBy']);
-    }
-
-    public function update(Appointment $appointment, array $data): Appointment
-    {
-        if (isset($data['doctor_id']) || isset($data['scheduled_at'])) {
+        return DB::transaction(function () use ($data): Appointment {
             $this->ensureSlotAvailable(
-                $data['doctor_id'] ?? $appointment->doctor_id,
-                $data['scheduled_at'] ?? $appointment->scheduled_at,
+                $data->doctorId,
+                Carbon::parse($data->scheduledAt),
+                $data->durationMinutes,
+            );
+
+            return $this->loadRelations($this->appointments->create($data));
+        });
+    }
+
+    public function reschedule(Appointment $appointment, RescheduleAppointmentDTO $data): Appointment
+    {
+        return DB::transaction(function () use ($appointment, $data): Appointment {
+            $appointment = $this->appointments->findForUpdate($appointment->id);
+
+            if (! in_array($appointment->status, Appointment::RESCHEDULABLE_STATUSES, true)) {
+                throw new ConflictHttpException('Esta marcação não pode ser reagendada no estado atual.');
+            }
+
+            $doctorId = $data->doctorId ?? $appointment->doctor_id;
+
+            if (! $this->appointments->doctorIsActive($doctorId)) {
+                throw new ConflictHttpException('O médico selecionado não está ativo.');
+            }
+
+            $this->ensureSlotAvailable(
+                $doctorId,
+                Carbon::parse($data->scheduledAt),
+                $data->durationMinutes,
                 $appointment->id,
             );
-        }
 
-        $appointment->update($data);
-
-        return $appointment->refresh()->load(['patient', 'doctor.user', 'createdBy']);
+            return $this->loadRelations($this->appointments->reschedule($appointment, $data));
+        });
     }
 
-    private function ensureSlotAvailable(int $doctorId, mixed $scheduledAt, ?int $ignoreId = null): void
+    public function cancel(Appointment $appointment, CancelAppointmentDTO $data): Appointment
     {
-        $exists = Appointment::query()
-            ->where('doctor_id', $doctorId)
-            ->where('scheduled_at', $scheduledAt)
-            ->whereNotIn('status', ['cancelled', 'no_show'])
-            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
-            ->exists();
+        return DB::transaction(function () use ($appointment, $data): Appointment {
+            $appointment = $this->appointments->findForUpdate($appointment->id);
+            $this->ensureTransitionIsAllowed($appointment, Appointment::STATUS_CANCELLED);
 
-        if ($exists) {
+            return $this->loadRelations($this->appointments->update($appointment, [
+                'status' => Appointment::STATUS_CANCELLED,
+                'cancelled_by' => $data->cancelledBy,
+                'cancelled_at' => now(),
+                'cancellation_reason' => $data->reason,
+            ]));
+        });
+    }
+
+    public function changeStatus(Appointment $appointment, ChangeAppointmentStatusDTO $data): Appointment
+    {
+        return DB::transaction(function () use ($appointment, $data): Appointment {
+            $appointment = $this->appointments->findForUpdate($appointment->id);
+            $this->ensureTransitionIsAllowed($appointment, $data->status);
+
+            return $this->loadRelations($this->appointments->update($appointment, [
+                'status' => $data->status,
+            ]));
+        });
+    }
+
+    private function ensureSlotAvailable(
+        int $doctorId,
+        Carbon $startsAt,
+        int $durationMinutes,
+        ?int $ignoreAppointmentId = null,
+    ): void {
+        if ($this->appointments->hasScheduleConflict($doctorId, $startsAt, $durationMinutes, $ignoreAppointmentId)) {
             throw new ConflictHttpException('O médico já possui uma marcação neste horário.');
         }
+    }
+
+    private function ensureTransitionIsAllowed(Appointment $appointment, string $status): void
+    {
+        if (! $appointment->canTransitionTo($status)) {
+            throw new ConflictHttpException('Transição de estado inválida para esta marcação.');
+        }
+    }
+
+    private function loadRelations(Appointment $appointment): Appointment
+    {
+        return $appointment->load(['patient', 'doctor.user', 'scheduledBy', 'cancelledBy']);
     }
 }

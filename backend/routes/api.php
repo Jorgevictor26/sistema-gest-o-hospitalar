@@ -50,8 +50,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function (): void {
 
 Route::middleware(['auth:sanctum', 'role:admin,receptionist,doctor'])->group(function (): void {
     Route::get('dashboard', DashboardController::class);
-    Route::get('appointments', [AppointmentController::class, 'index']);
-    Route::patch('appointments/{appointment}', [AppointmentController::class, 'update']);
+    Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel']);
+    Route::patch('appointments/{appointment}/confirm', [AppointmentController::class, 'confirm']);
+    Route::patch('appointments/{appointment}/complete', [AppointmentController::class, 'complete']);
+    Route::patch('appointments/{appointment}/no-show', [AppointmentController::class, 'markAsNoShow']);
     Route::get('doctors', [DoctorController::class, 'index']);
     Route::get('doctors/{doctor}', [DoctorController::class, 'show']);
     Route::get('procedures', [ProcedureController::class, 'index']);
@@ -69,6 +71,7 @@ Route::middleware(['auth:sanctum', 'role:admin,receptionist'])->group(function (
     Route::get('patients/{patient}', [PatientController::class, 'show']);
     Route::match(['put', 'patch'], 'patients/{patient}', [PatientController::class, 'update']);
     Route::post('appointments', [AppointmentController::class, 'store']);
+    Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule']);
     Route::post('attendances', [AttendanceController::class, 'store']);
     Route::get('attendances/{attendance}/payments', [PaymentController::class, 'index']);
     Route::post('attendances/{attendance}/payments', [PaymentController::class, 'store']);
