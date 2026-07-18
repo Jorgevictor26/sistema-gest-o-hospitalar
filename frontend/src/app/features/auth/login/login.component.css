@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.clinic-background {
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbWkjzPQSforlUo3tuMPzMq0REVggcKeiHm-7Bnis1O4v35HDQqELnWr4aLozMsQBTaDG8a_Ufwv7C7nZfm9QP2DU7pHcu5yii13FvihTl6D08oR7biDPUt1N_YLsxvy65ucPgfYxIkbzwVnWdrPOneYxSx0nCURn5tozkxjK4rQUocv5QhxrsDCvQ0WQrW8lU6OTHMT1CIiBg6ZQmWjPpJdddjjN6xFcEL2-16zyfDGzVeqDepWBS');
+  background-position: center;
+  background-size: cover;
+}
