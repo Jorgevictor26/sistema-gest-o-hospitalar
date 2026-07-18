@@ -1,0 +1,66 @@
+<div class="mx-auto w-full max-w-[1600px] space-y-6 p-4 sm:p-6 lg:p-8">
+  <section class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+    <div>
+      <p class="mb-1 text-sm font-semibold uppercase tracking-[0.14em] text-[#00677d]">Área clínica</p>
+      <h1 class="text-3xl font-bold tracking-tight text-[#172126] sm:text-4xl">{{ greeting() }}, Dr. {{ firstName() }}</h1>
+      <p class="mt-2 text-sm text-[#566167] sm:text-base">Acompanhe a sua atividade clínica e a agenda do dia.@if (viewModel()?.speciality; as speciality) { <span class="font-semibold"> · {{ speciality }}</span> }</p>
+    </div>
+    <a routerLink="/doctor/agenda" class="inline-flex w-fit items-center gap-2 rounded-xl bg-[#005d90] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#004b74]">
+      <span class="material-symbols-outlined text-[20px]">calendar_month</span>Ver minha agenda
+    </a>
+  </section>
+
+  @if (status() === 'loading') {
+    <section class="grid animate-pulse gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="A carregar dashboard">
+      @for (item of [1, 2, 3, 4]; track item) { <div class="h-40 rounded-2xl border border-[#e1e3e4] bg-white p-5"><div class="h-11 w-11 rounded-xl bg-[#e8edef]"></div><div class="mt-6 h-7 w-16 rounded bg-[#e8edef]"></div><div class="mt-3 h-3 w-32 rounded bg-[#f0f3f4]"></div></div> }
+    </section>
+  } @else if (status() === 'error') {
+    <section class="rounded-2xl border border-red-200 bg-red-50 p-8 text-center"><span class="material-symbols-outlined text-4xl text-red-600">error</span><h2 class="mt-3 text-lg font-bold text-red-800">{{ errorTitle() }}</h2><p class="mt-1 text-sm text-red-700">{{ errorMessage() }}</p><button type="button" class="mt-5 rounded-xl bg-red-700 px-4 py-2.5 text-sm font-semibold text-white" (click)="retry()">Tentar novamente</button></section>
+  } @else if (viewModel(); as vm) {
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumo clínico">
+      @for (card of vm.statistics; track card.label) {
+        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-[0_2px_8px_rgba(23,33,38,0.04)]"><div class="mb-5 flex items-start justify-between"><span class="material-symbols-outlined rounded-xl p-2.5 {{ card.tone }}">{{ card.icon }}</span>@if (card.value === null) { <span class="rounded-full bg-[#f2f4f5] px-2.5 py-1 text-xs font-medium text-[#6f797e]">Sem dados</span> }</div><p class="text-3xl font-bold text-[#172126]">{{ card.value ?? '—' }}</p><p class="mt-1 text-sm font-medium text-[#566167]">{{ card.label }}</p></article>
+      }
+    </section>
+
+    <section class="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.75fr)]">
+      <div class="space-y-6">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(240px,0.75fr)]">
+          <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-[0_2px_8px_rgba(23,33,38,0.04)] sm:p-6">
+            <div class="flex justify-between"><div><h2 class="text-lg font-bold text-[#172126]">Fluxo de pacientes</h2><p class="mt-1 text-sm text-[#6f797e]">Últimos 7 dias</p></div><span class="material-symbols-outlined text-[#8a9499]">bar_chart</span></div>
+            <div class="mt-8 flex h-48 items-end justify-between gap-3 border-b border-[#dfe3e5] px-2">@for (point of vm.patientFlow; track point.label) { <div class="flex h-full flex-1 flex-col items-center justify-end gap-2"><div class="min-h-2 w-full max-w-10 rounded-t-md bg-[#00677d]" [style.height.%]="point.percentage"></div><span class="pb-2 text-xs text-[#798489]">{{ point.label }}</span></div> } @empty { <p class="m-auto text-sm text-[#6f797e]">Sem dados de fluxo.</p> }</div>
+            @if (!hasPatientFlow()) { <p class="mt-4 text-center text-sm text-[#6f797e]">Sem dados de fluxo de pacientes.</p> }
+          </article>
+          <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-[0_2px_8px_rgba(23,33,38,0.04)] sm:p-6">
+            <h2 class="text-lg font-bold text-[#172126]">Faixa etária</h2><p class="mt-1 text-sm text-[#6f797e]">Distribuição dos pacientes</p><div class="mt-7 space-y-5">@for (range of vm.ageDistribution; track range.label) { <div><div class="mb-2 flex justify-between text-xs font-medium text-[#566167]"><span>{{ range.label }}</span><span>{{ range.value || '—' }}</span></div><div class="h-2 overflow-hidden rounded-full bg-[#edf0f1]"><div class="h-full rounded-full bg-[#00677d]" [style.width.%]="range.percentage"></div></div></div> } @empty { <div class="rounded-xl border border-dashed border-[#c8d0d3] bg-[#f8fafb] p-7 text-center"><p class="text-sm font-semibold text-[#566167]">Dados não fornecidos pelo backend</p></div> }</div>
+          </article>
+        </div>
+
+        <article class="overflow-hidden rounded-2xl border border-[#e1e3e4] bg-white shadow-[0_2px_8px_rgba(23,33,38,0.04)]">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#e1e3e4] p-5 sm:px-6"><div><h2 class="text-lg font-bold text-[#172126]">Pacientes de hoje</h2><p class="mt-1 text-sm text-[#6f797e]">A sua lista de atendimentos do dia</p></div><span class="rounded-full bg-[#eef3f5] px-3 py-1 text-xs font-semibold text-[#566167]">{{ vm.todayPatients.length }} pacientes</span></div>
+          <div class="overflow-x-auto"><table class="w-full min-w-[760px] text-left"><thead class="bg-[#f7f9fa] text-xs uppercase tracking-wide text-[#6f797e]"><tr><th class="px-6 py-3 font-semibold">Paciente</th><th class="px-4 py-3 font-semibold">Idade</th><th class="px-4 py-3 font-semibold">Horário</th><th class="px-4 py-3 font-semibold">Procedimentos</th><th class="px-4 py-3 font-semibold">Estado</th><th class="px-6 py-3 text-right font-semibold">Ação</th></tr></thead><tbody>
+            @for (patient of vm.todayPatients; track patient.attendanceId) { <tr class="border-t border-[#edf0f1]"><td class="px-6 py-4 font-semibold text-[#263238]">{{ patient.patient }}</td><td class="px-4 py-4 text-sm text-[#566167]">{{ patient.age ?? '—' }}</td><td class="px-4 py-4 text-sm text-[#566167]">{{ patient.time ?? '—' }}</td><td class="px-4 py-4 text-sm text-[#566167]">{{ patient.procedures.join(', ') || '—' }}</td><td class="px-4 py-4">@if (patient.status; as patientStatus) { <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ statusClasses(patientStatus) }}">{{ statusLabel(patientStatus) }}</span> } @else { <span class="text-sm text-[#798489]">—</span> }</td><td class="px-6 py-4 text-right"><a [routerLink]="['/attendances', patient.attendanceId]" class="inline-flex rounded-lg p-2 text-[#005d90] hover:bg-[#e4f3fa]" aria-label="Visualizar atendimento"><span class="material-symbols-outlined">visibility</span></a></td></tr> } @empty { <tr><td colspan="6" class="px-6 py-14 text-center"><span class="material-symbols-outlined mb-3 block text-4xl text-[#aeb6ba]">person_search</span><p class="font-semibold text-[#3f494e]">Sem atendimentos hoje</p><p class="mt-1 text-sm text-[#798489]">Não existem pacientes para apresentar.</p></td></tr> }
+          </tbody></table></div>
+        </article>
+
+        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-[0_2px_8px_rgba(23,33,38,0.04)] sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3"><div><h2 class="text-lg font-bold text-[#172126]">Comissões estimadas</h2><p class="mt-1 text-sm text-[#6f797e]">Valores previstos, ainda sem controlo de pagamento efetivo</p></div><a routerLink="/doctor/commissions" class="text-sm font-semibold text-[#005d90] hover:underline">Ver minhas comissões</a></div>
+          @if (vm.commissions.today === null && vm.commissions.week === null && vm.commissions.month === null) { <div class="mt-6 rounded-xl border border-dashed border-[#c8d0d3] bg-[#f8fafb] p-7 text-center"><span class="material-symbols-outlined text-3xl text-[#9aa4a9]">payments</span><p class="mt-2 text-sm font-semibold text-[#566167]">Sem dados de comissão</p></div> } @else { <div class="mt-6 grid gap-4 sm:grid-cols-3"><div><p class="text-xs text-[#6f797e]">Estimada hoje</p><p class="mt-1 text-xl font-bold">{{ formatKz(vm.commissions.today) }}</p></div><div><p class="text-xs text-[#6f797e]">Estimada esta semana</p><p class="mt-1 text-xl font-bold">{{ formatKz(vm.commissions.week) }}</p></div><div><p class="text-xs text-[#6f797e]">Estimada este mês</p><p class="mt-1 text-xl font-bold">{{ formatKz(vm.commissions.month) }}</p></div></div> }
+        </article>
+      </div>
+
+      <aside class="space-y-6">
+        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-[0_2px_8px_rgba(23,33,38,0.04)] sm:p-6">
+          <div class="flex items-center justify-between"><div><h2 class="text-lg font-bold text-[#172126]">Próximas marcações</h2><p class="mt-1 text-sm text-[#6f797e]">Agenda de hoje</p></div><span class="material-symbols-outlined text-[#00677d]">schedule</span></div>
+          <div class="mt-6 space-y-3">@for (appointment of vm.appointments; track appointment.id) { <div class="rounded-xl border border-[#e1e3e4] p-4"><div class="flex items-start justify-between gap-3"><div><p class="text-lg font-bold text-[#172126]">{{ appointment.time }}</p><p class="mt-1 text-sm font-semibold text-[#3f494e]">{{ appointment.patient }}</p></div><span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ statusClasses(appointment.status) }}">{{ statusLabel(appointment.status) }}</span></div><p class="mt-3 text-xs text-[#6f797e]">{{ appointment.durationMinutes }} minutos</p></div> } @empty { <div class="rounded-xl border border-dashed border-[#c8d0d3] bg-[#f8fafb] px-5 py-10 text-center"><span class="material-symbols-outlined text-3xl text-[#9aa4a9]">event_busy</span><p class="mt-2 text-sm font-semibold text-[#566167]">Sem marcações</p></div> }</div>
+          <a routerLink="/doctor/agenda" class="mt-5 block text-center text-sm font-semibold text-[#005d90] hover:underline">Ver agenda completa</a>
+        </article>
+
+        <article class="rounded-2xl border border-[#e1e3e4] bg-white p-5 shadow-[0_2px_8px_rgba(23,33,38,0.04)] sm:p-6">
+          <div class="flex items-center justify-between"><div><h2 class="text-lg font-bold text-[#172126]">Procedimentos frequentes</h2><p class="mt-1 text-sm text-[#6f797e]">Resumo do período</p></div><span class="material-symbols-outlined text-[#00677d]">clinical_notes</span></div>
+          <div class="mt-6 space-y-5">@for (procedure of vm.frequentProcedures; track procedure.id) { <div><div class="mb-2 flex justify-between text-sm"><span class="font-semibold text-[#3f494e]">{{ procedure.name }}</span><span class="text-[#6f797e]">{{ procedure.count }}</span></div><div class="h-2 overflow-hidden rounded-full bg-[#edf0f1]"><div class="h-full rounded-full bg-[#00677d]" [style.width.%]="procedure.percentage"></div></div></div> } @empty { <div class="rounded-xl border border-dashed border-[#c8d0d3] bg-[#f8fafb] p-7 text-center"><span class="material-symbols-outlined text-3xl text-[#9aa4a9]">clinical_notes</span><p class="mt-2 text-sm font-semibold text-[#566167]">Sem procedimentos</p></div> }</div>
+        </article>
+      </aside>
+    </section>
+  }
+</div>

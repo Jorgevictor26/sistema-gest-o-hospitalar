@@ -57,7 +57,7 @@ export class LoginComponent {
         }),
       )
       .subscribe({
-        next: () => void this.router.navigateByUrl('/dashboard'),
+        next: () => void this.router.navigateByUrl(this.authService.dashboardUrl()),
         error: (error: HttpErrorResponse) => this.loginError.set(this.errorMessage(error)),
       });
   }

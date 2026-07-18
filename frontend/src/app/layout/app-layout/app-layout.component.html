@@ -1,0 +1,19 @@
+<div class="min-h-dvh bg-[#f8f9fa] text-[#191c1d]">
+  <app-sidebar [open]="sidebarOpen()" (closed)="sidebarOpen.set(false)" />
+
+  @if (sidebarOpen()) {
+    <button
+      type="button"
+      class="fixed inset-0 z-40 bg-[#191c1d]/40 lg:hidden"
+      aria-label="Fechar menu"
+      (click)="sidebarOpen.set(false)"
+    ></button>
+  }
+
+  <div class="min-h-dvh lg:ml-[260px]">
+    <app-topbar (menuToggle)="sidebarOpen.update(open => !open)" />
+    <main>
+      <router-outlet />
+    </main>
+  </div>
+</div>

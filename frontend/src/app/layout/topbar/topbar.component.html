@@ -1,0 +1,21 @@
+<header class="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-4 border-b border-[#bfc7d1] bg-[#f8f9fa]/95 px-4 py-3 backdrop-blur md:px-6">
+  <div class="flex min-w-0 items-center gap-3">
+    <button type="button" class="rounded-lg p-2 text-2xl hover:bg-[#e7e8e9] lg:hidden" aria-label="Abrir menu" (click)="menuToggle.emit()">☰</button>
+    @if (pageData$ | async; as page) {
+      <div class="min-w-0">
+        <h1 class="truncate text-xl font-bold text-[#005d90] md:text-2xl">{{ page.title }}</h1>
+        <p class="hidden truncate text-sm text-[#404850] sm:block">{{ page.subtitle }}</p>
+      </div>
+    }
+  </div>
+
+  <div class="flex items-center gap-2 sm:gap-4">
+    <button type="button" class="flex h-10 w-10 items-center justify-center rounded-full text-xl text-[#404850] hover:bg-[#e7e8e9]" aria-label="Pesquisar">⌕</button>
+    <button type="button" class="relative flex h-10 w-10 items-center justify-center rounded-full text-xl text-[#404850] hover:bg-[#e7e8e9]" aria-label="Notificações">♢</button>
+    @if (authService.hasRole('admin') || authService.hasRole('receptionist')) {
+      <a routerLink="/attendances/new" class="hidden items-center gap-2 rounded-lg bg-[#005d90] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0077b6] sm:flex">
+        <span class="text-xl">+</span> Novo atendimento
+      </a>
+    }
+  </div>
+</header>

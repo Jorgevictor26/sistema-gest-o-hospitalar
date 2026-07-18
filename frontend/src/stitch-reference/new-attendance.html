@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html lang="pt"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Novo Atendimento - Centro Médico Vida</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-background": "#191c1d",
+                        "on-tertiary-fixed-variant": "#30476a",
+                        "on-primary-container": "#f3f7ff",
+                        "primary-fixed-dim": "#94ccff",
+                        "inverse-primary": "#94ccff",
+                        "surface-tint": "#006399",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#b0c7f1",
+                        "primary-container": "#0077b6",
+                        "outline": "#707881",
+                        "secondary-fixed": "#b3ebff",
+                        "on-surface-variant": "#404850",
+                        "primary-fixed": "#cde5ff",
+                        "on-primary-fixed-variant": "#004b74",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#00677d",
+                        "secondary-container": "#50d9fe",
+                        "surface-bright": "#f8f9fa",
+                        "on-surface": "#191c1d",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001d32",
+                        "surface-container-low": "#f3f4f5",
+                        "tertiary-container": "#5b7297",
+                        "secondary-fixed-dim": "#4cd6fb",
+                        "primary": "#005d90",
+                        "on-secondary-container": "#005c70",
+                        "outline-variant": "#bfc7d1",
+                        "inverse-surface": "#2e3132",
+                        "on-tertiary-fixed": "#001b3c",
+                        "surface-dim": "#d9dadb",
+                        "tertiary": "#43597e",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#001f27",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary-fixed-variant": "#004e5f",
+                        "tertiary-fixed": "#d5e3ff",
+                        "surface-container": "#edeeef",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "surface": "#f8f9fa",
+                        "background": "#f8f9fa",
+                        "on-tertiary-container": "#f5f6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "base": "8px",
+                        "container-margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #E9ECEF;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-animate { animation: slideIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface border-r border-outline-variant flex flex-col p-md gap-xs shadow-sm z-50">
+<div class="mb-lg px-xs">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Centro Médico Vida</h1>
+<p class="text-on-surface-variant font-label-md text-label-sm">Gestão Clínica</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<!-- Visão Geral -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Visão geral</span>
+</a>
+<!-- Atendimentos - Active -->
+<a class="flex items-center gap-md p-md bg-primary-container text-on-primary-container font-semibold rounded-lg cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_note</span>
+<span class="font-label-md text-label-md">Atendimentos</span>
+</a>
+<!-- Fecho diário -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Fecho diário</span>
+</a>
+<!-- Pacientes -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Pacientes</span>
+</a>
+<!-- Médicos -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+<span class="font-label-md text-label-md">Médicos</span>
+</a>
+<!-- Procedimentos -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="font-label-md text-label-md">Procedimentos</span>
+</a>
+<!-- Utilizadores -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Utilizadores</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Relatórios</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-md">
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Definições</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center h-16 px-lg sticky top-0 z-40 w-full ml-[260px] max-w-[calc(100%-260px)] bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-primary">Novo atendimento</h2>
+</div>
+<div class="flex items-center gap-lg">
+<button class="relative text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-error border-2 border-surface"></span>
+</button>
+<div class="flex items-center gap-md pl-md border-l border-outline-variant">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md font-bold">Admin User</p>
+<p class="text-on-surface-variant text-[12px]">Rececionista</p>
+</div>
+<div class="h-10 w-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly medical administrative staff member, wearing a clean navy blue polo shirt, set against a bright minimalist clinic interior with soft daylighting and modern corporate aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhI-E4tYnN2_kkxGNJbx_9a0EVyGXl396qcEfgNwtOFq1TfgKVjvWtDLdNRbWrs7406U2WQgB6fy7QWvmf0TvlBzZH_kUKV9KLJG6bZUcEoiLhbdG3CIEBaK5KE1zPrT9JGGHvxvbPV3Qp_31COoEWWurdLyNjcHPSpjoZMzCDoKztscC_440LSSFSJQwKhyjde1b93qW-7Xb4nnktZGSTwlnXLhf_Y3HLuuDQrgjvu9hC6qefT5nX"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] p-lg max-w-[1200px]">
+<div class="mb-lg">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Novo atendimento</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Registe os dados do paciente e os procedimentos realizados.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Left Column: Patient and Doctor -->
+<div class="lg:col-span-2 flex flex-col gap-lg">
+<!-- Section 1: Paciente -->
+<section class="glass-card rounded-xl p-lg shadow-sm">
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">person</span>
+<h4 class="font-headline-md text-[18px] font-bold">Paciente</h4>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                            Cadastrar novo paciente
+                        </button>
+</div>
+<div class="relative mb-lg">
+<span class="absolute left-md top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="w-full pl-xl pr-md py-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="Pesquisar por nome, BI ou telemóvel..." type="text"/>
+</div>
+<!-- Selected Patient Card -->
+<div class="bg-primary-fixed/30 rounded-lg p-md border border-primary-fixed flex items-center gap-md">
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary-fixed-variant">
+<span class="material-symbols-outlined text-[32px]">person</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface font-body-md">João Manuel Fernandes</p>
+<div class="grid grid-cols-2 gap-x-lg gap-y-xs mt-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]">call</span> +244 923 456 789</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]">id_card</span> 0067452LA041</span>
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[14px]">cake</span> 14 Jun 1985 (38 anos)</span>
+</div>
+</div>
+<button class="text-outline hover:text-error p-xs transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</section>
+<!-- Section 2: Médico -->
+<section class="glass-card rounded-xl p-lg shadow-sm">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary">medical_services</span>
+<h4 class="font-headline-md text-[18px] font-bold">Médico Responsável</h4>
+</div>
+<div class="relative">
+<select class="w-full pl-md pr-xl py-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none appearance-none cursor-pointer">
+<option>Selecione o médico...</option>
+<option selected="">Dr. António Santos (Clínica Geral)</option>
+<option>Dra. Maria Luísa (Pediatria)</option>
+<option>Dr. Ricardo Pereira (Cardiologia)</option>
+</select>
+<span class="absolute right-md top-1/2 -translate-y-1/2 material-symbols-outlined text-outline pointer-events-none">expand_more</span>
+</div>
+<div class="mt-md flex items-center gap-md p-sm bg-surface-container-low rounded-lg">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male doctor in his 40s, wearing a white lab coat and stethoscope, looking confident and professional. The background is a blurred high-end medical clinic with soft blue tones and minimalist decor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaKytZLFOkLgpZTdET8K3sBR-QGqy_-hCt_RB5ogsFTQAshUuxS1kk0ZBvqj6F6yl2PyLDtGIeGMnshDAr35lA6jngn1V5p58EuhlBdEsREVLkSQgfc3GwLQ3LkSLw1sZsJZxxOx0dAPzC1-C0Gs8vFD7LhnNHCy1-cqCTyGKMXJTPFnoVoRHZmkiKAvAF9j69baN2rhpAYjCylvi79XB65eF-O_Nl535IIwj75_tKSGTXHrSWgBMc"/>
+</div>
+<div>
+<p class="font-bold text-on-surface font-label-md">Dr. António Santos</p>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Especialidade: Clínica Geral</p>
+</div>
+</div>
+</section>
+<!-- Section 3: Procedimentos -->
+<section class="glass-card rounded-xl p-lg shadow-sm">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary">category</span>
+<h4 class="font-headline-md text-[18px] font-bold">Procedimentos e Serviços</h4>
+</div>
+<div class="relative mb-md">
+<span class="absolute left-md top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">add_circle</span>
+<input class="w-full pl-xl pr-md py-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Adicionar procedimento (ex: Consulta, Análises...)" type="text"/>
+</div>
+<div class="flex flex-wrap gap-sm">
+<!-- Removable Tags -->
+<div class="flex items-center gap-xs px-md py-sm bg-secondary-container/20 border border-secondary-container rounded-full text-on-secondary-container">
+<span class="font-label-md text-label-md">Consulta Geral - 15 000 Kz</span>
+<button class="hover:text-error transition-colors flex"><span class="material-symbols-outlined text-[18px]">close</span></button>
+</div>
+<div class="flex items-center gap-xs px-md py-sm bg-secondary-container/20 border border-secondary-container rounded-full text-on-secondary-container">
+<span class="font-label-md text-label-md">Hemograma Completo - 4 500 Kz</span>
+<button class="hover:text-error transition-colors flex"><span class="material-symbols-outlined text-[18px]">close</span></button>
+</div>
+<div class="flex items-center gap-xs px-md py-sm bg-secondary-container/20 border border-secondary-container rounded-full text-on-secondary-container">
+<span class="font-label-md text-label-md">Glicémia - 2 000 Kz</span>
+<button class="hover:text-error transition-colors flex"><span class="material-symbols-outlined text-[18px]">close</span></button>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Payment & Summary -->
+<div class="lg:col-span-1 flex flex-col gap-lg">
+<!-- Section 4: Pagamento -->
+<section class="glass-card rounded-xl p-lg shadow-sm flex flex-col gap-md sticky top-24">
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-primary">payments</span>
+<h4 class="font-headline-md text-[18px] font-bold">Resumo e Pagamento</h4>
+</div>
+<div class="space-y-md">
+<div class="flex justify-between items-center p-md bg-surface-container rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total</span>
+<span class="font-headline-md text-headline-md text-primary" id="total-val">21 500,00 Kz</span>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Valor Pago</label>
+<input class="w-full p-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none" id="paid-input" type="number" value="21500"/>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Valor em Falta</span>
+<span class="font-label-md text-label-md font-bold" id="pending-val">0,00 Kz</span>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Método de Pagamento</label>
+<select class="w-full p-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none">
+<option>Numerário</option>
+<option selected="">TPA</option>
+<option>Seguro</option>
+<option>Transferência</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Data e Hora</label>
+<div class="flex gap-xs">
+<input class="flex-1 p-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary text-label-sm" type="date" value="2023-11-24"/>
+<input class="w-24 p-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary text-label-sm" type="time" value="14:30"/>
+</div>
+</div>
+<!-- Status Badge -->
+<div class="mt-xs">
+<span class="px-md py-xs rounded-full font-label-sm text-label-sm flex items-center justify-center gap-xs bg-[#2A9D8F]/10 text-[#2A9D8F] border border-[#2A9D8F]/30" id="status-badge">
+<span class="h-2 w-2 rounded-full bg-[#2A9D8F]"></span>
+                                Pago
+                            </span>
+</div>
+</div>
+<div class="mt-lg pt-md border-t border-outline-variant flex flex-col gap-sm">
+<button class="w-full py-md bg-primary text-on-primary rounded-lg font-bold flex items-center justify-center gap-md hover:bg-primary-container transition-all active:scale-95" id="btn-save">
+<span class="material-symbols-outlined">save</span>
+                            Guardar atendimento
+                        </button>
+<button class="w-full py-md text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors rounded-lg">
+                            Cancelar
+                        </button>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Success Toast (Hidden by default) -->
+<div class="fixed bottom-lg right-lg hidden z-[100] toast-animate" id="success-toast">
+<div class="bg-surface border-l-4 border-secondary p-lg rounded shadow-xl flex items-center gap-md min-w-[320px]">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<p class="font-bold text-on-surface font-label-md">Sucesso</p>
+<p class="text-on-surface-variant text-label-sm">Atendimento registado com sucesso.</p>
+</div>
+<button class="ml-auto text-outline hover:text-on-surface" onclick="document.getElementById('success-toast').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<script>
+        const paidInput = document.getElementById('paid-input');
+        const pendingVal = document.getElementById('pending-val');
+        const statusBadge = document.getElementById('status-badge');
+        const totalAmount = 21500;
+
+        paidInput.addEventListener('input', (e) => {
+            const paid = parseFloat(e.target.value) || 0;
+            const pending = totalAmount - paid;
+            
+            pendingVal.innerText = `${pending.toLocaleString('pt-PT', { minimumFractionDigits: 2 })} Kz`;
+            
+            if (pending <= 0) {
+                statusBadge.className = "px-md py-xs rounded-full font-label-sm text-label-sm flex items-center justify-center gap-xs bg-[#2A9D8F]/10 text-[#2A9D8F] border border-[#2A9D8F]/30";
+                statusBadge.innerHTML = '<span class="h-2 w-2 rounded-full bg-[#2A9D8F]"></span> Pago';
+            } else if (pending < totalAmount) {
+                statusBadge.className = "px-md py-xs rounded-full font-label-sm text-label-sm flex items-center justify-center gap-xs bg-[#F4A261]/10 text-[#E76F51] border border-[#F4A261]/30";
+                statusBadge.innerHTML = '<span class="h-2 w-2 rounded-full bg-[#F4A261]"></span> Parcial';
+            } else {
+                statusBadge.className = "px-md py-xs rounded-full font-label-sm text-label-sm flex items-center justify-center gap-xs bg-[#E63946]/10 text-[#E63946] border border-[#E63946]/30";
+                statusBadge.innerHTML = '<span class="h-2 w-2 rounded-full bg-[#E63946]"></span> Não Pago';
+            }
+        });
+
+        const btnSave = document.getElementById('btn-save');
+        btnSave.addEventListener('click', () => {
+            const originalText = btnSave.innerHTML;
+            btnSave.disabled = true;
+            btnSave.classList.add('opacity-70', 'cursor-not-allowed');
+            btnSave.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processando...`;
+            
+            setTimeout(() => {
+                btnSave.innerHTML = originalText;
+                btnSave.disabled = false;
+                btnSave.classList.remove('opacity-70', 'cursor-not-allowed');
+                
+                const toast = document.getElementById('success-toast');
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 4000);
+            }, 1500);
+        });
+    </script>
+</body></html>

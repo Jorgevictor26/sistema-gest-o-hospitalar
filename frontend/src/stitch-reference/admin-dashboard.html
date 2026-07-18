@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+<html lang="pt"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro Médico Vida - Visão Geral</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "on-error": "#ffffff",
+                    "on-background": "#191c1d",
+                    "on-tertiary-fixed-variant": "#30476a",
+                    "on-primary-container": "#f3f7ff",
+                    "primary-fixed-dim": "#94ccff",
+                    "inverse-primary": "#94ccff",
+                    "surface-tint": "#006399",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#b0c7f1",
+                    "primary-container": "#0077b6",
+                    "outline": "#707881",
+                    "secondary-fixed": "#b3ebff",
+                    "on-surface-variant": "#404850",
+                    "primary-fixed": "#cde5ff",
+                    "on-primary-fixed-variant": "#004b74",
+                    "surface-container-highest": "#e1e3e4",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#00677d",
+                    "secondary-container": "#50d9fe",
+                    "surface-bright": "#f8f9fa",
+                    "on-surface": "#191c1d",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#001d32",
+                    "surface-container-low": "#f3f4f5",
+                    "tertiary-container": "#5b7297",
+                    "secondary-fixed-dim": "#4cd6fb",
+                    "primary": "#005d90",
+                    "on-secondary-container": "#005c70",
+                    "outline-variant": "#bfc7d1",
+                    "inverse-surface": "#2e3132",
+                    "on-tertiary-fixed": "#001b3c",
+                    "surface-dim": "#d9dadb",
+                    "tertiary": "#43597e",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#001f27",
+                    "surface-container-high": "#e7e8e9",
+                    "on-secondary-fixed-variant": "#004e5f",
+                    "tertiary-fixed": "#d5e3ff",
+                    "surface-container": "#edeeef",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "surface": "#f8f9fa",
+                    "background": "#f8f9fa",
+                    "on-tertiary-container": "#f5f6ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "base": "8px",
+                    "container-margin": "24px",
+                    "sm": "8px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(120px, auto);
+            gap: 1.5rem;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e9ecef;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #bfc7d1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface dark:bg-surface-dim border-r border-outline-variant dark:border-outline shadow-sm flex flex-col h-full p-md gap-xs z-50">
+<div class="flex flex-col gap-xs mb-lg">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Centro Médico Vida</span>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Gestão Clínica</span>
+</div>
+<nav class="flex-1 flex flex-col gap-1 overflow-y-auto custom-scrollbar">
+<!-- Active: Visão geral -->
+<a class="bg-primary-container text-on-primary-container font-semibold rounded-lg flex items-center gap-3 px-3 py-2 cursor-pointer transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Visão geral</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="font-label-md text-label-md">Atendimentos</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Fecho diário</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Pacientes</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+<span class="font-label-md text-label-md">Médicos</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="font-label-md text-label-md">Procedimentos</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Utilizadores</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Relatórios</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Definições</span>
+</a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high cursor-pointer transition-colors">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Corporate headshot of a professional African man wearing clinical administration attire, soft clinic background, high-end professional lighting, minimalist aesthetic with blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA915bNoTxGQEnNmS8K5W_9ge6JRBRezuSrfOSV6S0yx7L2rjzApq2ClrTUzgjokWLHVmKHFaBbPDFcLyABYCIPMrXNcdd9bEVsM7u9obaS_Jy5NyA8hTmriwSz0RDedXT7D0Mfc7PrqXab52sRyF1-VwHefKBbpNA6KVVNXW9MVQZPQ2GPa-Vq8oiF6vxQPiruTFewIDDK7R15sldNU72B4oNC_GjOqkxXgZcQEnV9WHC0pnhAxYM7"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold">Admin Geral</span>
+<span class="text-label-sm text-on-surface-variant">admin@cmvida.co.ao</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] flex-1 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-16 px-lg sticky top-0 z-40 w-full bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline">
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">Visão geral</h1>
+<p class="text-label-md text-on-surface-variant font-normal">Acompanhe o movimento e o desempenho do centro médico.</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+                    Novo Atendimento
+                </button>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-lg flex flex-col gap-lg max-w-[1440px] mx-auto w-full">
+<!-- Summary Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-md">
+<!-- Patients today -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<span class="text-xs font-bold text-success-600 bg-green-50 px-2 py-1 rounded-full flex items-center gap-1" style="color: #2A9D8F;">
+                            +5% <span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+</span>
+</div>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Pacientes hoje</span>
+<span class="text-headline-md font-bold">48</span>
+</div>
+<!-- Attendances today -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+</div>
+<span class="text-xs font-bold text-success-600 bg-green-50 px-2 py-1 rounded-full flex items-center gap-1" style="color: #2A9D8F;">
+                            +2% <span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+</span>
+</div>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Atendimentos hoje</span>
+<span class="text-headline-md font-bold">52</span>
+</div>
+<!-- Revenue Total -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col gap-2">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Total faturado</span>
+<span class="text-headline-md font-bold">1 245 000 Kz</span>
+</div>
+<!-- Received -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col gap-2">
+<div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center text-[#2A9D8F]">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Total recebido</span>
+<span class="text-headline-md font-bold text-[#2A9D8F]">980 000 Kz</span>
+</div>
+<!-- Pending -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col gap-2">
+<div class="w-10 h-10 rounded-lg bg-error-container/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Total pendente</span>
+<span class="text-headline-md font-bold text-error">265 000 Kz</span>
+</div>
+</div>
+<!-- Bento Content Area -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Main Chart: 7 Days Attendances -->
+<div class="col-span-12 lg:col-span-8 bg-white p-lg rounded-xl border border-outline-variant shadow-sm min-h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-headline-md text-body-lg font-bold">Atendimentos nos últimos 7 dias</h3>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 text-label-sm text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-primary"></span> Consultas</span>
+<span class="flex items-center gap-1 text-label-sm text-on-surface-variant"><span class="w-3 h-3 rounded-full bg-secondary"></span> Exames</span>
+</div>
+</div>
+<div class="flex-1 flex items-end gap-4 px-4 pb-8 relative">
+<!-- Simplified Bar Chart Visual -->
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-surface-container-high rounded-t-lg relative h-32 hover:bg-primary-container transition-all"></div>
+<span class="text-label-sm text-on-surface-variant">Seg</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-surface-container-high rounded-t-lg relative h-48 hover:bg-primary-container transition-all"></div>
+<span class="text-label-sm text-on-surface-variant">Ter</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-primary rounded-t-lg relative h-64 hover:opacity-80 transition-all">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-2 py-1 rounded text-[10px]">52</div>
+</div>
+<span class="text-label-sm font-bold text-primary">Qua</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-surface-container-high rounded-t-lg relative h-40 hover:bg-primary-container transition-all"></div>
+<span class="text-label-sm text-on-surface-variant">Qui</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-surface-container-high rounded-t-lg relative h-56 hover:bg-primary-container transition-all"></div>
+<span class="text-label-sm text-on-surface-variant">Sex</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-surface-container-high rounded-t-lg relative h-24 hover:bg-primary-container transition-all"></div>
+<span class="text-label-sm text-on-surface-variant">Sáb</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-surface-container-high rounded-t-lg relative h-12 hover:bg-primary-container transition-all"></div>
+<span class="text-label-sm text-on-surface-variant">Dom</span>
+</div>
+</div>
+</div>
+<!-- Secondary Chart: Payment States -->
+<div class="col-span-12 lg:col-span-4 bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col">
+<h3 class="font-headline-md text-body-lg font-bold mb-lg">Estado de pagamento</h3>
+<div class="flex-1 flex flex-col items-center justify-center gap-6">
+<div class="relative w-48 h-48">
+<!-- Circular Progress Indicator simulation -->
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-high" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="24"></circle>
+<circle class="text-primary" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="150" stroke-width="24"></circle>
+<circle class="text-secondary" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="400" stroke-width="24"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-headline-md font-bold">78%</span>
+<span class="text-label-sm text-on-surface-variant">Liquidados</span>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2">
+<div class="flex justify-between items-center text-label-md">
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary"></span> Pago</span>
+<span class="font-bold">41</span>
+</div>
+<div class="flex justify-between items-center text-label-md">
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary"></span> Parcial</span>
+<span class="font-bold">8</span>
+</div>
+<div class="flex justify-between items-center text-label-md">
+<span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-error"></span> Não pago</span>
+<span class="font-bold">3</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions: Horizontal Scroller or Grid -->
+<div class="col-span-12">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-headline-md text-body-lg font-bold">Ações rápidas</h3>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-md">
+<button class="flex flex-col items-center justify-center gap-3 p-lg bg-white border border-outline-variant rounded-xl hover:border-primary hover:bg-primary-container/10 transition-all group">
+<span class="material-symbols-outlined text-primary text-[32px] group-hover:scale-110 transition-transform" data-icon="add_circle">add_circle</span>
+<span class="font-label-md text-label-md text-on-surface">Novo atendimento</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-lg bg-white border border-outline-variant rounded-xl hover:border-primary hover:bg-primary-container/10 transition-all group">
+<span class="material-symbols-outlined text-primary text-[32px] group-hover:scale-110 transition-transform" data-icon="person_add">person_add</span>
+<span class="font-label-md text-label-md text-on-surface">Cadastrar paciente</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-lg bg-white border border-outline-variant rounded-xl hover:border-primary hover:bg-primary-container/10 transition-all group">
+<span class="material-symbols-outlined text-primary text-[32px] group-hover:scale-110 transition-transform" data-icon="medical_information">medical_information</span>
+<span class="font-label-md text-label-md text-on-surface">Cadastrar médico</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-lg bg-white border border-outline-variant rounded-xl hover:border-primary hover:bg-primary-container/10 transition-all group">
+<span class="material-symbols-outlined text-primary text-[32px] group-hover:scale-110 transition-transform" data-icon="post_add">post_add</span>
+<span class="font-label-md text-label-md text-on-surface">Adicionar procedimento</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-lg bg-white border border-outline-variant rounded-xl hover:border-primary hover:bg-primary-container/10 transition-all group">
+<span class="material-symbols-outlined text-primary text-[32px] group-hover:scale-110 transition-transform" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md text-on-surface">Consultar fecho</span>
+</button>
+</div>
+</div>
+<!-- Recent Attendances Table -->
+<div class="col-span-12 bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<div class="px-lg py-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-md text-body-lg font-bold">Atendimentos Recentes</h3>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 border border-outline-variant rounded-lg text-label-md focus:ring-2 focus:ring-primary focus:outline-none bg-surface" placeholder="Pesquisar..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg text-label-md hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="filter_list">filter_list</span>
+                                Filtros
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface text-label-sm text-on-surface-variant uppercase tracking-wider">
+<th class="px-lg py-4 font-semibold">Código</th>
+<th class="px-lg py-4 font-semibold">Paciente</th>
+<th class="px-lg py-4 font-semibold">Médico</th>
+<th class="px-lg py-4 font-semibold">Especialidade</th>
+<th class="px-lg py-4 font-semibold">Procedimentos</th>
+<th class="px-lg py-4 font-semibold text-right">Total</th>
+<th class="px-lg py-4 font-semibold">Estado</th>
+<th class="px-lg py-4 font-semibold">Hora</th>
+<th class="px-lg py-4 font-semibold text-center">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-lg py-4 text-label-md font-bold text-primary">#AT-2024-001</td>
+<td class="px-lg py-4 text-label-md font-medium">Maria Domingos</td>
+<td class="px-lg py-4 text-label-md">Dr. Paulo Miguel</td>
+<td class="px-lg py-4 text-label-md">Clínica Geral</td>
+<td class="px-lg py-4 text-label-sm text-on-surface-variant">Consulta de rotina, Hemograma</td>
+<td class="px-lg py-4 text-label-md text-right font-bold">25 000 Kz</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-bold bg-green-50 text-[#2A9D8F]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#2A9D8F]"></span> Pago
+                                        </span>
+</td>
+<td class="px-lg py-4 text-label-sm text-on-surface-variant">08:45</td>
+<td class="px-lg py-4 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-lg py-4 text-label-md font-bold text-primary">#AT-2024-002</td>
+<td class="px-lg py-4 text-label-md font-medium">João António</td>
+<td class="px-lg py-4 text-label-md">Dra. Carla Joaquim</td>
+<td class="px-lg py-4 text-label-md">Pediatria</td>
+<td class="px-lg py-4 text-label-sm text-on-surface-variant">Consulta pediátrica</td>
+<td class="px-lg py-4 text-label-md text-right font-bold">18 500 Kz</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-bold bg-secondary-container/10 text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Parcial
+                                        </span>
+</td>
+<td class="px-lg py-4 text-label-sm text-on-surface-variant">09:15</td>
+<td class="px-lg py-4 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-lg py-4 text-label-md font-bold text-primary">#AT-2024-003</td>
+<td class="px-lg py-4 text-label-md font-medium">Helena Manuel</td>
+<td class="px-lg py-4 text-label-md">Dr. Paulo Miguel</td>
+<td class="px-lg py-4 text-label-md">Cardiologia</td>
+<td class="px-lg py-4 text-label-sm text-on-surface-variant">Ecocardiograma, ECG</td>
+<td class="px-lg py-4 text-label-md text-right font-bold">45 000 Kz</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-bold bg-error-container/20 text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Não pago
+                                        </span>
+</td>
+<td class="px-lg py-4 text-label-sm text-on-surface-variant">09:30</td>
+<td class="px-lg py-4 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-4 border-t border-outline-variant bg-surface flex justify-between items-center">
+<span class="text-label-sm text-on-surface-variant">A mostrar 1-3 de 52 atendimentos hoje</span>
+<div class="flex gap-2">
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB - Only for Home/Dashboard as per mandate -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-[28px]" data-icon="add_to_photos">add_to_photos</span>
+</button>
+<script>
+        // Micro-interactions for table rows and buttons
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                if(row.querySelector('td')) {
+                    row.classList.add('bg-primary-container/5');
+                    setTimeout(() => row.classList.remove('bg-primary-container/5'), 200);
+                }
+            });
+        });
+
+        // Simple mock for "New Attendance" toast
+        document.querySelectorAll('button').forEach(btn => {
+            if(btn.innerText.includes('Novo Atendimento')) {
+                btn.addEventListener('click', () => {
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed top-4 right-4 bg-white border-l-4 border-[#2A9D8F] shadow-xl p-4 rounded flex items-center gap-3 z-[100] animate-bounce';
+                    toast.innerHTML = `
+                        <span class="material-symbols-outlined text-[#2A9D8F]" data-icon="check_circle">check_circle</span>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-label-md">Sistema Pronto</span>
+                            <span class="text-label-sm text-on-surface-variant">A carregar formulário de admissão...</span>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                });
+            }
+        });
+    </script>
+</body></html>

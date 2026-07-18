@@ -1,0 +1,41 @@
+<aside
+  class="fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col gap-1 border-r border-[#bfc7d1] bg-[#f8f9fa] p-4 shadow-sm transition-transform duration-200 lg:translate-x-0"
+  [class.translate-x-0]="open"
+  [class.-translate-x-full]="!open"
+>
+  <div class="mb-6 flex items-start justify-between gap-2">
+    <div class="flex flex-col gap-1">
+      <span class="text-2xl font-bold text-[#005d90]">Centro Médico Vida</span>
+      <span class="text-xs font-semibold uppercase tracking-wider text-[#404850]">Gestão Clínica</span>
+    </div>
+    <button type="button" class="p-2 text-xl lg:hidden" aria-label="Fechar menu" (click)="close()">×</button>
+  </div>
+
+  <nav class="flex flex-1 flex-col gap-1 overflow-y-auto" aria-label="Navegação principal">
+    @for (item of menuItems(); track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-[#0077b6] text-white font-semibold"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#404850] transition-colors hover:bg-[#e7e8e9] hover:text-[#191c1d]"
+        (click)="close()"
+      >
+        <span class="flex h-6 w-6 items-center justify-center text-xl" aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="mt-auto border-t border-[#bfc7d1] pt-4">
+    <div class="flex items-center gap-3 rounded-lg p-2">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#cde5ff] text-sm font-bold text-[#004b74]">
+        {{ initials() }}
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-bold">{{ user()?.name }}</p>
+        <p class="truncate text-xs text-[#404850]">{{ user()?.email }}</p>
+      </div>
+      <button type="button" class="rounded p-2 text-[#404850] hover:bg-[#e7e8e9]" aria-label="Terminar sessão" (click)="logout()">↪</button>
+    </div>
+  </div>
+</aside>
